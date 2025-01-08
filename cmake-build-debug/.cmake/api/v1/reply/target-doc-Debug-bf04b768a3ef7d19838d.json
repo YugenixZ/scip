@@ -1,0 +1,53 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_dependencies"
+		],
+		"files" : 
+		[
+			"gcg/CMakeLists.txt",
+			"gcg/doc/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 271,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 2,
+				"parent" : 2
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "gcg_doc::@8aed5a686340f70c1f1b"
+		}
+	],
+	"id" : "doc::@c4eb4bd3fa38c1c523fb",
+	"name" : "doc",
+	"paths" : 
+	{
+		"build" : "gcg",
+		"source" : "gcg"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

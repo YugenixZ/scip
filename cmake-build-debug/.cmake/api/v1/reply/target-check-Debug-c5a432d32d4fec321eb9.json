@@ -1,0 +1,63 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_dependencies"
+		],
+		"files" : 
+		[
+			"scip/check/CMakeLists.txt",
+			"gcg/check/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 16,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 19,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 3,
+				"parent" : 3
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "scip_check::@ab02e8aa32d2faa758e6"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "gcg_check::@d6474b29ab4b5ecc7f50"
+		}
+	],
+	"id" : "check::@ab02e8aa32d2faa758e6",
+	"name" : "check",
+	"paths" : 
+	{
+		"build" : "scip/check",
+		"source" : "scip/check"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

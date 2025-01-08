@@ -1,0 +1,1 @@
+ -DREADLINE=off -DGMP=off -DPAPILO=off -DZIMPL=off -DIPOPT=off -DSANITIZE_UNDEFINED=on -DSOPLEX_DIR=D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug -DSYM=snauty

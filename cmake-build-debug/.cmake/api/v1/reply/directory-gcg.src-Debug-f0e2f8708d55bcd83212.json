@@ -1,0 +1,337 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"gcg/src/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 481,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 484,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 492,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 519,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 520,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/gcg",
+			"paths" : 
+			[
+				"gcg/src/gcg/branch_empty.h",
+				"gcg/src/gcg/branch_bpstrong.h",
+				"gcg/src/gcg/branch_generic.h",
+				"gcg/src/gcg/branch_orig.h",
+				"gcg/src/gcg/branch_relpsprob.h",
+				"gcg/src/gcg/branch_ryanfoster.h",
+				"gcg/src/gcg/class_conspartition.h",
+				"gcg/src/gcg/class_indexpartition.h",
+				"gcg/src/gcg/miscvisualization.h",
+				"gcg/src/gcg/class_pricingcontroller.h",
+				"gcg/src/gcg/class_pricingtype.h",
+				"gcg/src/gcg/class_partialdecomp.h",
+				"gcg/src/gcg/class_detprobdata.h",
+				"gcg/src/gcg/class_stabilization.h",
+				"gcg/src/gcg/class_varpartition.h",
+				"gcg/src/gcg/clscons.h",
+				"gcg/src/gcg/clsvar.h",
+				"gcg/src/gcg/colpool.h",
+				"gcg/src/gcg/cons_decomp.h",
+				"gcg/src/gcg/cons_decomp.hpp",
+				"gcg/src/gcg/cons_integralorig.h",
+				"gcg/src/gcg/cons_masterbranch.h",
+				"gcg/src/gcg/cons_origbranch.h",
+				"gcg/src/gcg/dec_compgreedily.h",
+				"gcg/src/gcg/dec_connected_noNewLinkingVars.h",
+				"gcg/src/gcg/dec_connectedbase.h",
+				"gcg/src/gcg/dec_consclass.h",
+				"gcg/src/gcg/dec_constype.h",
+				"gcg/src/gcg/dec_dbscan.h",
+				"gcg/src/gcg/dec_densemasterconss.h",
+				"gcg/src/gcg/dec_generalmastersetcover.h",
+				"gcg/src/gcg/dec_generalmastersetpack.h",
+				"gcg/src/gcg/dec_generalmastersetpart.h",
+				"gcg/src/gcg/dec_mastersetcover.h",
+				"gcg/src/gcg/dec_mastersetpack.h",
+				"gcg/src/gcg/dec_mastersetpart.h",
+				"gcg/src/gcg/dec_mst.h",
+				"gcg/src/gcg/dec_neighborhoodmaster.h",
+				"gcg/src/gcg/dec_postprocess.h",
+				"gcg/src/gcg/dec_staircase_lsp.h",
+				"gcg/src/gcg/dec_stairheur.h",
+				"gcg/src/gcg/dec_varclass.h",
+				"gcg/src/gcg/decomp.h",
+				"gcg/src/gcg/def.h",
+				"gcg/src/gcg/dialog_gcg.h",
+				"gcg/src/gcg/dialog_graph.h",
+				"gcg/src/gcg/dialog_master.h",
+				"gcg/src/gcg/disp_gcg.h",
+				"gcg/src/gcg/disp_master.h",
+				"gcg/src/gcg/event_bestsol.h",
+				"gcg/src/gcg/event_display.h",
+				"gcg/src/gcg/event_mastersol.h",
+				"gcg/src/gcg/event_relaxsol.h",
+				"gcg/src/gcg/event_solvingstats.h",
+				"gcg/src/gcg/gcg.h",
+				"gcg/src/gcg/gcgcol.h",
+				"gcg/src/gcg/gcg_general.h",
+				"gcg/src/gcg/gcggithash.h",
+				"gcg/src/gcg/gcgplugins.h",
+				"gcg/src/gcg/gcgpqueue.h",
+				"gcg/src/gcg/gcgsort.h",
+				"gcg/src/gcg/heur_gcgcoefdiving.h",
+				"gcg/src/gcg/heur_gcgdins.h",
+				"gcg/src/gcg/heur_gcgfeaspump.h",
+				"gcg/src/gcg/heur_gcgfracdiving.h",
+				"gcg/src/gcg/heur_gcgguideddiving.h",
+				"gcg/src/gcg/heur_gcglinesdiving.h",
+				"gcg/src/gcg/heur_gcgpscostdiving.h",
+				"gcg/src/gcg/heur_gcgrens.h",
+				"gcg/src/gcg/heur_gcgrins.h",
+				"gcg/src/gcg/heur_gcgrounding.h",
+				"gcg/src/gcg/heur_gcgshifting.h",
+				"gcg/src/gcg/heur_gcgsimplerounding.h",
+				"gcg/src/gcg/heur_gcgveclendiving.h",
+				"gcg/src/gcg/heur_gcgzirounding.h",
+				"gcg/src/gcg/heur_greedycolsel.h",
+				"gcg/src/gcg/heur_mastercoefdiving.h",
+				"gcg/src/gcg/heur_masterdiving.h",
+				"gcg/src/gcg/heur_masterfracdiving.h",
+				"gcg/src/gcg/heur_masterlinesdiving.h",
+				"gcg/src/gcg/heur_mastervecldiving.h",
+				"gcg/src/gcg/heur_origdiving.h",
+				"gcg/src/gcg/heur_relaxcolsel.h",
+				"gcg/src/gcg/heur_restmaster.h",
+				"gcg/src/gcg/heur_setcover.h",
+				"gcg/src/gcg/heur_xpcrossover.h",
+				"gcg/src/gcg/heur_xprins.h",
+				"gcg/src/gcg/masterplugins.h",
+				"gcg/src/gcg/nodesel_master.h",
+				"gcg/src/gcg/objdialog.h",
+				"gcg/src/gcg/objpricer_gcg.h",
+				"gcg/src/gcg/params_visu.h",
+				"gcg/src/gcg/presol_roundbound.h",
+				"gcg/src/gcg/pricer_gcg.h",
+				"gcg/src/gcg/pricestore_gcg.h",
+				"gcg/src/gcg/pricingjob.h",
+				"gcg/src/gcg/pricingprob.h",
+				"gcg/src/gcg/pub_bliss.h",
+				"gcg/src/gcg/pub_clscons.h",
+				"gcg/src/gcg/pub_clsvar.h",
+				"gcg/src/gcg/pub_colpool.h",
+				"gcg/src/gcg/pub_decomp.h",
+				"gcg/src/gcg/pub_gcgcol.h",
+				"gcg/src/gcg/pub_gcgheur.h",
+				"gcg/src/gcg/pub_gcgsepa.h",
+				"gcg/src/gcg/pub_gcgpqueue.h",
+				"gcg/src/gcg/pub_gcgvar.h",
+				"gcg/src/gcg/pub_pricingjob.h",
+				"gcg/src/gcg/pub_pricingprob.h",
+				"gcg/src/gcg/pub_score.h",
+				"gcg/src/gcg/pub_solver.h",
+				"gcg/src/gcg/reader_blk.h",
+				"gcg/src/gcg/reader_cls.h",
+				"gcg/src/gcg/reader_dec.h",
+				"gcg/src/gcg/reader_gp.h",
+				"gcg/src/gcg/reader_ref.h",
+				"gcg/src/gcg/reader_tex.h",
+				"gcg/src/gcg/relax_gcg.h",
+				"gcg/src/gcg/scip_misc.h",
+				"gcg/src/gcg/score_bender.h",
+				"gcg/src/gcg/score_border.h",
+				"gcg/src/gcg/score_classic.h",
+				"gcg/src/gcg/score_fawh.h",
+				"gcg/src/gcg/score_forswh.h",
+				"gcg/src/gcg/score_maxwhite.h",
+				"gcg/src/gcg/score_spfawh.h",
+				"gcg/src/gcg/score_spfwh.h",
+				"gcg/src/gcg/score_strong.h",
+				"gcg/src/gcg/score.h",
+				"gcg/src/gcg/sepa_basis.h",
+				"gcg/src/gcg/sepa_master.h",
+				"gcg/src/gcg/solver.h",
+				"gcg/src/gcg/solver_cliquer.h",
+				"gcg/src/gcg/solver_knapsack.h",
+				"gcg/src/gcg/solver_mip.h",
+				"gcg/src/gcg/solver_xyz.h",
+				"gcg/src/gcg/stat.h",
+				"gcg/src/gcg/struct_branchgcg.h",
+				"gcg/src/gcg/struct_colpool.h",
+				"gcg/src/gcg/struct_decomp.h",
+				"gcg/src/gcg/struct_detector.h",
+				"gcg/src/gcg/struct_gcgcol.h",
+				"gcg/src/gcg/struct_gcgpqueue.h",
+				"gcg/src/gcg/struct_pricestore_gcg.h",
+				"gcg/src/gcg/struct_pricingjob.h",
+				"gcg/src/gcg/struct_pricingprob.h",
+				"gcg/src/gcg/struct_score.h",
+				"gcg/src/gcg/struct_solver.h",
+				"gcg/src/gcg/struct_vardata.h",
+				"gcg/src/gcg/type_branchgcg.h",
+				"gcg/src/gcg/type_classifier.h",
+				"gcg/src/gcg/type_colpool.h",
+				"gcg/src/gcg/type_consclassifier.h",
+				"gcg/src/gcg/type_decomp.h",
+				"gcg/src/gcg/type_detector.h",
+				"gcg/src/gcg/type_gcgcol.h",
+				"gcg/src/gcg/type_gcgpqueue.h",
+				"gcg/src/gcg/type_masterdiving.h",
+				"gcg/src/gcg/type_origdiving.h",
+				"gcg/src/gcg/type_parameter.h",
+				"gcg/src/gcg/type_pricestore_gcg.h",
+				"gcg/src/gcg/type_pricingjob.h",
+				"gcg/src/gcg/type_pricingprob.h",
+				"gcg/src/gcg/type_pricingstatus.h",
+				"gcg/src/gcg/type_score.h",
+				"gcg/src/gcg/type_solver.h",
+				"gcg/src/gcg/type_varclassifier.h",
+				"gcg/src/gcg/wrapper_partialdecomp.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "include/graph",
+			"paths" : 
+			[
+				"gcg/src/graph/bipartitegraph.h",
+				"gcg/src/graph/bipartitegraph_def.h",
+				"gcg/src/graph/bridge.h",
+				"gcg/src/graph/columngraph.h",
+				"gcg/src/graph/columngraph_def.h",
+				"gcg/src/graph/graph.h",
+				"gcg/src/graph/graph_def.h",
+				"gcg/src/graph/graph_gcg.h",
+				"gcg/src/graph/graph_interface.h",
+				"gcg/src/graph/graph_tclique.h",
+				"gcg/src/graph/graphalgorithms.h",
+				"gcg/src/graph/graphalgorithms_def.h",
+				"gcg/src/graph/hypercolgraph.h",
+				"gcg/src/graph/hypercolgraph_def.h",
+				"gcg/src/graph/hypergraph.h",
+				"gcg/src/graph/hypergraph_def.h",
+				"gcg/src/graph/hyperrowcolgraph.h",
+				"gcg/src/graph/hyperrowcolgraph_def.h",
+				"gcg/src/graph/hyperrowgraph.h",
+				"gcg/src/graph/hyperrowgraph_def.h",
+				"gcg/src/graph/matrixgraph.h",
+				"gcg/src/graph/matrixgraph_def.h",
+				"gcg/src/graph/rowgraph.h",
+				"gcg/src/graph/rowgraph_def.h",
+				"gcg/src/graph/weights.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"bin/gcg.exe"
+			],
+			"targetId" : "gcg::@370781a95cd4f4ea87b0",
+			"targetIndex" : 42,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/libgcg.dll.a"
+			],
+			"targetId" : "libgcg::@370781a95cd4f4ea87b0",
+			"targetIndex" : 52,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"bin/libgcg.dll"
+			],
+			"targetId" : "libgcg::@370781a95cd4f4ea87b0",
+			"targetIndex" : 52,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/gcg",
+			"exportName" : "gcg-targets",
+			"exportTargets" : 
+			[
+				{
+					"id" : "gcg::@370781a95cd4f4ea87b0",
+					"index" : 42
+				},
+				{
+					"id" : "libgcg::@370781a95cd4f4ea87b0",
+					"index" : 52
+				}
+			],
+			"paths" : 
+			[
+				"gcg/src/CMakeFiles/Export/55a8c2330c2af6b35ecce0f90032ca65/gcg-targets.cmake"
+			],
+			"type" : "export"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/gcg",
+			"paths" : 
+			[
+				"cmake-build-debug/gcg/CMakeFiles/gcg-config.cmake"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "gcg/src",
+		"source" : "gcg/src"
+	}
+}

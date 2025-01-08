@@ -1,0 +1,1701 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						5,
+						39,
+						43
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "soplex",
+					"childIndexes" : 
+					[
+						2,
+						3,
+						4
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-soplex-Debug-5d7d3ea9d13d27c29e63.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "soplex",
+					"targetIndexes" : 
+					[
+						72,
+						73
+					]
+				},
+				{
+					"build" : "soplex/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-soplex.src-Debug-420328272936fe8ec8be.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "soplex/src",
+					"targetIndexes" : 
+					[
+						38,
+						56,
+						57,
+						58,
+						70
+					]
+				},
+				{
+					"build" : "soplex/tests/c_interface",
+					"jsonFile" : "directory-soplex.tests.c_interface-Debug-ff972a202c5974bcd9ab.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "soplex/tests/c_interface",
+					"targetIndexes" : 
+					[
+						71
+					]
+				},
+				{
+					"build" : "soplex/check",
+					"jsonFile" : "directory-soplex.check-Debug-ff4c73beb908546b7a6e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "soplex/check",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27
+					]
+				},
+				{
+					"build" : "scip",
+					"childIndexes" : 
+					[
+						6,
+						7,
+						8,
+						9,
+						10,
+						27
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-scip-Debug-b2a84bd68cde5656019e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "scip",
+					"targetIndexes" : 
+					[
+						28,
+						67,
+						77
+					]
+				},
+				{
+					"build" : "scip/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-scip.src-Debug-00c3cf229466f55158b7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "scip/src",
+					"targetIndexes" : 
+					[
+						53,
+						54,
+						55,
+						65
+					]
+				},
+				{
+					"build" : "scip/check",
+					"jsonFile" : "directory-scip.check-Debug-7f8a4be5036f56dbca9e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "scip/check",
+					"targetIndexes" : 
+					[
+						32,
+						66
+					]
+				},
+				{
+					"build" : "scip/tests",
+					"jsonFile" : "directory-scip.tests-Debug-f9fec30d82a9022c547f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "scip/tests"
+				},
+				{
+					"build" : "scip/doc",
+					"jsonFile" : "directory-scip.doc-Debug-3da873c8db8a19104de9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "scip/doc"
+				},
+				{
+					"build" : "scip/examples",
+					"childIndexes" : 
+					[
+						11,
+						13,
+						14,
+						15,
+						16,
+						18,
+						19,
+						20,
+						22,
+						24,
+						26
+					],
+					"jsonFile" : "directory-scip.examples-Debug-fdd41b5fe6dbe95d2d63.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "scip/examples",
+					"targetIndexes" : 
+					[
+						39
+					]
+				},
+				{
+					"build" : "scip/examples/Binpacking",
+					"childIndexes" : 
+					[
+						12
+					],
+					"jsonFile" : "directory-scip.examples.Binpacking-Debug-67601383c5a80be311a7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 4,
+					"source" : "scip/examples/Binpacking",
+					"targetIndexes" : 
+					[
+						30
+					]
+				},
+				{
+					"build" : "scip/examples/Binpacking/check",
+					"jsonFile" : "directory-scip.examples.Binpacking.check-Debug-5af634323f296e519488.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 11,
+					"projectIndex" : 4,
+					"source" : "scip/examples/Binpacking/check"
+				},
+				{
+					"build" : "scip/examples/CallableLibrary",
+					"jsonFile" : "directory-scip.examples.CallableLibrary-Debug-59382172455e96eddc82.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 5,
+					"source" : "scip/examples/CallableLibrary",
+					"targetIndexes" : 
+					[
+						31,
+						33,
+						41,
+						74
+					]
+				},
+				{
+					"build" : "scip/examples/Eventhdlr",
+					"jsonFile" : "directory-scip.examples.Eventhdlr-Debug-db39c490789f51716f86.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 6,
+					"source" : "scip/examples/Eventhdlr",
+					"targetIndexes" : 
+					[
+						37
+					]
+				},
+				{
+					"build" : "scip/examples/GMI",
+					"jsonFile" : "directory-scip.examples.GMI-Debug-ad93b5f6ec85c27572f9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 7,
+					"source" : "scip/examples/GMI",
+					"targetIndexes" : 
+					[
+						51
+					]
+				},
+				{
+					"build" : "scip/examples/LOP",
+					"childIndexes" : 
+					[
+						17
+					],
+					"jsonFile" : "directory-scip.examples.LOP-Debug-d6e91ea53cf5c0a11731.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 8,
+					"source" : "scip/examples/LOP",
+					"targetIndexes" : 
+					[
+						59
+					]
+				},
+				{
+					"build" : "scip/examples/LOP/check",
+					"jsonFile" : "directory-scip.examples.LOP.check-Debug-d22d7bb1c8856728b956.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 16,
+					"projectIndex" : 8,
+					"source" : "scip/examples/LOP/check"
+				},
+				{
+					"build" : "scip/examples/MIPSolver",
+					"jsonFile" : "directory-scip.examples.MIPSolver-Debug-9cd248997611283cdc17.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 9,
+					"source" : "scip/examples/MIPSolver",
+					"targetIndexes" : 
+					[
+						68
+					]
+				},
+				{
+					"build" : "scip/examples/Queens",
+					"jsonFile" : "directory-scip.examples.Queens-Debug-193a9173780df4a05a14.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 10,
+					"source" : "scip/examples/Queens",
+					"targetIndexes" : 
+					[
+						61
+					]
+				},
+				{
+					"build" : "scip/examples/Relaxator",
+					"childIndexes" : 
+					[
+						21
+					],
+					"jsonFile" : "directory-scip.examples.Relaxator-Debug-1b6e3adc150c8eb69636.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 11,
+					"source" : "scip/examples/Relaxator",
+					"targetIndexes" : 
+					[
+						62
+					]
+				},
+				{
+					"build" : "scip/examples/Relaxator/check",
+					"jsonFile" : "directory-scip.examples.Relaxator.check-Debug-036abc9a7ade17dd33e0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 11,
+					"source" : "scip/examples/Relaxator/check"
+				},
+				{
+					"build" : "scip/examples/TSP",
+					"childIndexes" : 
+					[
+						23
+					],
+					"jsonFile" : "directory-scip.examples.TSP-Debug-8cd5a2c03fb59f7155f6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 12,
+					"source" : "scip/examples/TSP",
+					"targetIndexes" : 
+					[
+						69
+					]
+				},
+				{
+					"build" : "scip/examples/TSP/check",
+					"jsonFile" : "directory-scip.examples.TSP.check-Debug-7aa32ccdf2c18b53cf9d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 22,
+					"projectIndex" : 12,
+					"source" : "scip/examples/TSP/check"
+				},
+				{
+					"build" : "scip/examples/VRP",
+					"childIndexes" : 
+					[
+						25
+					],
+					"jsonFile" : "directory-scip.examples.VRP-Debug-ca68f59973d1b0744a0d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 13,
+					"source" : "scip/examples/VRP",
+					"targetIndexes" : 
+					[
+						78
+					]
+				},
+				{
+					"build" : "scip/examples/VRP/check",
+					"jsonFile" : "directory-scip.examples.VRP.check-Debug-69be2d963815a76e5980.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 24,
+					"projectIndex" : 13,
+					"source" : "scip/examples/VRP/check"
+				},
+				{
+					"build" : "scip/examples/Sudoku",
+					"jsonFile" : "directory-scip.examples.Sudoku-Debug-e96a7904fe3723973944.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 10,
+					"projectIndex" : 14,
+					"source" : "scip/examples/Sudoku",
+					"targetIndexes" : 
+					[
+						75
+					]
+				},
+				{
+					"build" : "scip/applications",
+					"childIndexes" : 
+					[
+						28,
+						30,
+						32,
+						35,
+						37
+					],
+					"jsonFile" : "directory-scip.applications-Debug-29982c25fba38585e313.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "scip/applications",
+					"targetIndexes" : 
+					[
+						29
+					]
+				},
+				{
+					"build" : "scip/applications/Coloring",
+					"childIndexes" : 
+					[
+						29
+					],
+					"jsonFile" : "directory-scip.applications.Coloring-Debug-e15c1ddc83e2dcbc691d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 27,
+					"projectIndex" : 15,
+					"source" : "scip/applications/Coloring",
+					"targetIndexes" : 
+					[
+						34
+					]
+				},
+				{
+					"build" : "scip/applications/Coloring/check",
+					"jsonFile" : "directory-scip.applications.Coloring.check-Debug-eb7c01ed5e61ea06aa39.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 28,
+					"projectIndex" : 15,
+					"source" : "scip/applications/Coloring/check"
+				},
+				{
+					"build" : "scip/applications/MinIISC",
+					"childIndexes" : 
+					[
+						31
+					],
+					"jsonFile" : "directory-scip.applications.MinIISC-Debug-d7c7bad948b89996492e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 27,
+					"projectIndex" : 16,
+					"source" : "scip/applications/MinIISC",
+					"targetIndexes" : 
+					[
+						60
+					]
+				},
+				{
+					"build" : "scip/applications/MinIISC/check",
+					"jsonFile" : "directory-scip.applications.MinIISC.check-Debug-fb3947f739c1d1c2c7fc.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 30,
+					"projectIndex" : 16,
+					"source" : "scip/applications/MinIISC/check"
+				},
+				{
+					"build" : "scip/applications/Ringpacking",
+					"childIndexes" : 
+					[
+						33,
+						34
+					],
+					"jsonFile" : "directory-scip.applications.Ringpacking-Debug-485a7f98b6a3e789ad41.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 27,
+					"projectIndex" : 17,
+					"source" : "scip/applications/Ringpacking",
+					"targetIndexes" : 
+					[
+						63
+					]
+				},
+				{
+					"build" : "scip/applications/Ringpacking/check",
+					"jsonFile" : "directory-scip.applications.Ringpacking.check-Debug-0dde65210d69e8718959.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 32,
+					"projectIndex" : 17,
+					"source" : "scip/applications/Ringpacking/check"
+				},
+				{
+					"build" : "scip/applications/Ringpacking/tests",
+					"jsonFile" : "directory-scip.applications.Ringpacking.tests-Debug-cef26b95dcddf9db855c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 32,
+					"projectIndex" : 17,
+					"source" : "scip/applications/Ringpacking/tests"
+				},
+				{
+					"build" : "scip/applications/Scheduler",
+					"childIndexes" : 
+					[
+						36
+					],
+					"jsonFile" : "directory-scip.applications.Scheduler-Debug-824f5ddd901aa72f2f01.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 27,
+					"projectIndex" : 18,
+					"source" : "scip/applications/Scheduler",
+					"targetIndexes" : 
+					[
+						64
+					]
+				},
+				{
+					"build" : "scip/applications/Scheduler/check",
+					"jsonFile" : "directory-scip.applications.Scheduler.check-Debug-3ce0751dca94986e01e4.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 35,
+					"projectIndex" : 18,
+					"source" : "scip/applications/Scheduler/check"
+				},
+				{
+					"build" : "scip/applications/CycleClustering",
+					"childIndexes" : 
+					[
+						38
+					],
+					"jsonFile" : "directory-scip.applications.CycleClustering-Debug-e0aaa6181f8f8d8bcb64.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 27,
+					"projectIndex" : 19,
+					"source" : "scip/applications/CycleClustering",
+					"targetIndexes" : 
+					[
+						35
+					]
+				},
+				{
+					"build" : "scip/applications/CycleClustering/check",
+					"jsonFile" : "directory-scip.applications.CycleClustering.check-Debug-ad1b5bf0d731a9f504b1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 37,
+					"projectIndex" : 19,
+					"source" : "scip/applications/CycleClustering/check"
+				},
+				{
+					"build" : "gcg",
+					"childIndexes" : 
+					[
+						40,
+						41,
+						42
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-gcg-Debug-3231123605d0f1a150ff.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.3"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 20,
+					"source" : "gcg",
+					"targetIndexes" : 
+					[
+						36,
+						43,
+						48,
+						49
+					]
+				},
+				{
+					"build" : "gcg/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-gcg.src-Debug-f0e2f8708d55bcd83212.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.3"
+					},
+					"parentIndex" : 39,
+					"projectIndex" : 20,
+					"source" : "gcg/src",
+					"targetIndexes" : 
+					[
+						42,
+						52
+					]
+				},
+				{
+					"build" : "gcg/check",
+					"jsonFile" : "directory-gcg.check-Debug-c4b60b3b6f9a712b750f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.3"
+					},
+					"parentIndex" : 39,
+					"projectIndex" : 20,
+					"source" : "gcg/check",
+					"targetIndexes" : 
+					[
+						44,
+						45,
+						47,
+						50
+					]
+				},
+				{
+					"build" : "gcg/doc",
+					"jsonFile" : "directory-gcg.doc-Debug-2dc1c37f3e086c287e22.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.3"
+					},
+					"parentIndex" : 39,
+					"projectIndex" : 20,
+					"source" : "gcg/doc",
+					"targetIndexes" : 
+					[
+						46
+					]
+				},
+				{
+					"build" : "ug",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-ug-Debug-8794d26275ca2156ac1c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 21,
+					"source" : "ug",
+					"targetIndexes" : 
+					[
+						40,
+						76
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						3,
+						20,
+						21
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "SCIPOptSuite"
+				},
+				{
+					"childIndexes" : 
+					[
+						2
+					],
+					"directoryIndexes" : 
+					[
+						1,
+						2,
+						4
+					],
+					"name" : "SOPLEX",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						38,
+						56,
+						57,
+						58,
+						70,
+						72,
+						73
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "soplex_testing",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						71
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19
+					],
+					"directoryIndexes" : 
+					[
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						27
+					],
+					"name" : "SCIP",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						28,
+						29,
+						32,
+						39,
+						53,
+						54,
+						55,
+						65,
+						66,
+						67,
+						77
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						11,
+						12
+					],
+					"name" : "Binpacking",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						30
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						13
+					],
+					"name" : "CallableLibrary",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						31,
+						33,
+						41,
+						74
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						14
+					],
+					"name" : "Eventhdlr",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						37
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						15
+					],
+					"name" : "GMI",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						51
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						16,
+						17
+					],
+					"name" : "LOP",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						59
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						18
+					],
+					"name" : "MIPSolver",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						68
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						19
+					],
+					"name" : "Queens",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						61
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						20,
+						21
+					],
+					"name" : "Relaxator",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						62
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						22,
+						23
+					],
+					"name" : "TSP",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						69
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						24,
+						25
+					],
+					"name" : "VRP",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						78
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						26
+					],
+					"name" : "Sudoku",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						75
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						28,
+						29
+					],
+					"name" : "Coloring",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						34
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						30,
+						31
+					],
+					"name" : "MinIISC",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						60
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						32,
+						33,
+						34
+					],
+					"name" : "Rinpacking",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						63
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						35,
+						36
+					],
+					"name" : "Scheduler",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						64
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						37,
+						38
+					],
+					"name" : "CycleClustering",
+					"parentIndex" : 3,
+					"targetIndexes" : 
+					[
+						35
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						39,
+						40,
+						41,
+						42
+					],
+					"name" : "GCG",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						36,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						52
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						43
+					],
+					"name" : "UG",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						40,
+						76
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "Continuous::@a5322900138764cc4ed2",
+					"jsonFile" : "target-Continuous-Debug-ed2df0a9a29af5db4e4f.json",
+					"name" : "Continuous",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousBuild::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousBuild-Debug-04f79248fbf1a47b11fb.json",
+					"name" : "ContinuousBuild",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousConfigure::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousConfigure-Debug-21b1b6e807389c4de053.json",
+					"name" : "ContinuousConfigure",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousCoverage::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousCoverage-Debug-8ed5f4ad33e227c006b5.json",
+					"name" : "ContinuousCoverage",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousMemCheck::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousMemCheck-Debug-6f6580064d4125c10e4c.json",
+					"name" : "ContinuousMemCheck",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousStart::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousStart-Debug-57223956772a654f648d.json",
+					"name" : "ContinuousStart",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousSubmit::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousSubmit-Debug-47887e79d09594ab24de.json",
+					"name" : "ContinuousSubmit",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousTest::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousTest-Debug-bbad03b4042646b8a784.json",
+					"name" : "ContinuousTest",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ContinuousUpdate::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ContinuousUpdate-Debug-e48391c1d79bf99252a3.json",
+					"name" : "ContinuousUpdate",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "Experimental::@a5322900138764cc4ed2",
+					"jsonFile" : "target-Experimental-Debug-6d611d87ec4c29df0f3f.json",
+					"name" : "Experimental",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalBuild::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalBuild-Debug-1a5e05ebd094cb9bebf1.json",
+					"name" : "ExperimentalBuild",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalConfigure::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalConfigure-Debug-daf62465d3c2906903eb.json",
+					"name" : "ExperimentalConfigure",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalCoverage::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalCoverage-Debug-1d15402a79b06119d8bb.json",
+					"name" : "ExperimentalCoverage",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalMemCheck::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalMemCheck-Debug-f360a520d989e794ead0.json",
+					"name" : "ExperimentalMemCheck",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalStart::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalStart-Debug-f2dcd7f921d1edf06616.json",
+					"name" : "ExperimentalStart",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalSubmit::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalSubmit-Debug-cb1b775f1f685f976e4f.json",
+					"name" : "ExperimentalSubmit",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalTest::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalTest-Debug-654ff8d40ac231a34b34.json",
+					"name" : "ExperimentalTest",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ExperimentalUpdate::@a5322900138764cc4ed2",
+					"jsonFile" : "target-ExperimentalUpdate-Debug-43e586be9b9685701409.json",
+					"name" : "ExperimentalUpdate",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "Nightly::@a5322900138764cc4ed2",
+					"jsonFile" : "target-Nightly-Debug-26dc2c8ae77d2d4aef7a.json",
+					"name" : "Nightly",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyBuild::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyBuild-Debug-a0109d02baf8be7f3016.json",
+					"name" : "NightlyBuild",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyConfigure::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyConfigure-Debug-6d798a0003320fcfd716.json",
+					"name" : "NightlyConfigure",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyCoverage::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyCoverage-Debug-d811e058e266547b5ccf.json",
+					"name" : "NightlyCoverage",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyMemCheck::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyMemCheck-Debug-bc9b4a3f840e76dd12e5.json",
+					"name" : "NightlyMemCheck",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyMemoryCheck::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyMemoryCheck-Debug-3bd520fa92d2d5768403.json",
+					"name" : "NightlyMemoryCheck",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyStart::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyStart-Debug-bde69a1433c93a38d282.json",
+					"name" : "NightlyStart",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlySubmit::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlySubmit-Debug-36f0c91857ac4168d403.json",
+					"name" : "NightlySubmit",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyTest::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyTest-Debug-e91cf77ea4ffcf7fc99b.json",
+					"name" : "NightlyTest",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "NightlyUpdate::@a5322900138764cc4ed2",
+					"jsonFile" : "target-NightlyUpdate-Debug-8a70927b3ad6011a1bfa.json",
+					"name" : "NightlyUpdate",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "all_executables::@0b7d00e3864201260c11",
+					"jsonFile" : "target-all_executables-Debug-898e9ad9bd77eff09fc7.json",
+					"name" : "all_executables",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 27,
+					"id" : "applications::@cdb1af8ced386d994730",
+					"jsonFile" : "target-applications-Debug-26e2e274cc7f5cf7de68.json",
+					"name" : "applications",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 11,
+					"id" : "binpacking::@2cf5ca05bfff08dccdec",
+					"jsonFile" : "target-binpacking-Debug-015a8a6709d84bc49d08.json",
+					"name" : "binpacking",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "brachistochrone::@cf62b141fff076a6c9e3",
+					"jsonFile" : "target-brachistochrone-Debug-89e00474ec16744cb9a1.json",
+					"name" : "brachistochrone",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "check::@ab02e8aa32d2faa758e6",
+					"jsonFile" : "target-check-Debug-c5a432d32d4fec321eb9.json",
+					"name" : "check",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "circlepacking::@cf62b141fff076a6c9e3",
+					"jsonFile" : "target-circlepacking-Debug-5f9812e7695c59589df2.json",
+					"name" : "circlepacking",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 28,
+					"id" : "coloring::@9f39737533cc86663cef",
+					"jsonFile" : "target-coloring-Debug-d15bc73f3c937fffc4fd.json",
+					"name" : "coloring",
+					"projectIndex" : 15
+				},
+				{
+					"directoryIndex" : 37,
+					"id" : "cycleclustering::@1f08b1f930b118d11408",
+					"jsonFile" : "target-cycleclustering-Debug-4842dd9263cf040d56d8.json",
+					"name" : "cycleclustering",
+					"projectIndex" : 19
+				},
+				{
+					"directoryIndex" : 39,
+					"id" : "doc::@c4eb4bd3fa38c1c523fb",
+					"jsonFile" : "target-doc-Debug-bf04b768a3ef7d19838d.json",
+					"name" : "doc",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 14,
+					"id" : "eventhdlr::@b32201dbcf58c3d9e376",
+					"jsonFile" : "target-eventhdlr-Debug-dc14d1be7c421d0a47e5.json",
+					"name" : "eventhdlr",
+					"projectIndex" : 6
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "example::@1903274bad8f58c6ebee",
+					"jsonFile" : "target-example-Debug-2402b85b22f5186dd854.json",
+					"name" : "example",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "examples::@1227f9aa57d6d6022833",
+					"jsonFile" : "target-examples-Debug-083bd646488a54d0f6e8.json",
+					"name" : "examples",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 43,
+					"id" : "fscip::@847ea563f97131f77342",
+					"jsonFile" : "target-fscip-Debug-fe0684af707f8918eed2.json",
+					"name" : "fscip",
+					"projectIndex" : 21
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "gastrans::@cf62b141fff076a6c9e3",
+					"jsonFile" : "target-gastrans-Debug-4432c169abd6663a11df.json",
+					"name" : "gastrans",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 40,
+					"id" : "gcg::@370781a95cd4f4ea87b0",
+					"jsonFile" : "target-gcg-Debug-946cb1edd8453d1c2a0c.json",
+					"name" : "gcg",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 39,
+					"id" : "gcg_all_executables::@c4eb4bd3fa38c1c523fb",
+					"jsonFile" : "target-gcg_all_executables-Debug-333e2b40ffd81edf4128.json",
+					"name" : "gcg_all_executables",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 41,
+					"id" : "gcg_check::@d6474b29ab4b5ecc7f50",
+					"jsonFile" : "target-gcg_check-Debug-1c145bfdc2e8dda97241.json",
+					"name" : "gcg_check",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 41,
+					"id" : "gcg_cluster::@d6474b29ab4b5ecc7f50",
+					"jsonFile" : "target-gcg_cluster-Debug-773fd463647430c29ed1.json",
+					"name" : "gcg_cluster",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 42,
+					"id" : "gcg_doc::@8aed5a686340f70c1f1b",
+					"jsonFile" : "target-gcg_doc-Debug-054c785586d233209aaf.json",
+					"name" : "gcg_doc",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 41,
+					"id" : "gcg_test::@d6474b29ab4b5ecc7f50",
+					"jsonFile" : "target-gcg_test-Debug-92222cd955282ff620e8.json",
+					"name" : "gcg_test",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 39,
+					"id" : "gcg_unittests::@c4eb4bd3fa38c1c523fb",
+					"jsonFile" : "target-gcg_unittests-Debug-382f6895249b4d8d9fea.json",
+					"name" : "gcg_unittests",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 39,
+					"id" : "gcg_update_githash::@c4eb4bd3fa38c1c523fb",
+					"jsonFile" : "target-gcg_update_githash-Debug-eb240c12a058466f6f86.json",
+					"name" : "gcg_update_githash",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 41,
+					"id" : "gcg_visu::@d6474b29ab4b5ecc7f50",
+					"jsonFile" : "target-gcg_visu-Debug-694b5894483448a4aa0e.json",
+					"name" : "gcg_visu",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 15,
+					"id" : "gmi::@a7eb2c916256339baa6a",
+					"jsonFile" : "target-gmi-Debug-4914948786e5a58f4c03.json",
+					"name" : "gmi",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 40,
+					"id" : "libgcg::@370781a95cd4f4ea87b0",
+					"jsonFile" : "target-libgcg-Debug-e7ca6676ff0b29882ebd.json",
+					"name" : "libgcg",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "liblpi::@a286e20a45db6014d0ce",
+					"jsonFile" : "target-liblpi-Debug-49b22787546080ce26ed.json",
+					"name" : "liblpi",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "libobjscip::@a286e20a45db6014d0ce",
+					"jsonFile" : "target-libobjscip-Debug-94a1d0ae6f01226c18f8.json",
+					"name" : "libobjscip",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "libscip::@a286e20a45db6014d0ce",
+					"jsonFile" : "target-libscip-Debug-01cb36973e324b6cbdb1.json",
+					"name" : "libscip",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "libsoplex::@1903274bad8f58c6ebee",
+					"jsonFile" : "target-libsoplex-Debug-9318ec27aad1c5a62cb3.json",
+					"name" : "libsoplex",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "libsoplex-pic::@1903274bad8f58c6ebee",
+					"jsonFile" : "target-libsoplex-pic-Debug-91eb18b0c0daeec774c5.json",
+					"name" : "libsoplex-pic",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "libsoplexshared::@1903274bad8f58c6ebee",
+					"jsonFile" : "target-libsoplexshared-Debug-9f36ec7f3a7deff0afc3.json",
+					"name" : "libsoplexshared",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 16,
+					"id" : "lop::@965ccb36b5d04966370c",
+					"jsonFile" : "target-lop-Debug-ddbbff395866e77385d4.json",
+					"name" : "lop",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 30,
+					"id" : "miniisc::@db7dee4b2dbc099f4a5e",
+					"jsonFile" : "target-miniisc-Debug-f112dd4d0035db4e534d.json",
+					"name" : "miniisc",
+					"projectIndex" : 16
+				},
+				{
+					"directoryIndex" : 19,
+					"id" : "queens::@4c0e3a27db9a84afc4e0",
+					"jsonFile" : "target-queens-Debug-4c4d3268b5e99479a118.json",
+					"name" : "queens",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 20,
+					"id" : "relaxator::@53cefd117badc5356269",
+					"jsonFile" : "target-relaxator-Debug-feb885a7376e8a1e7a6c.json",
+					"name" : "relaxator",
+					"projectIndex" : 11
+				},
+				{
+					"directoryIndex" : 32,
+					"id" : "ringpacking::@c62ab343b9d2f95101f4",
+					"jsonFile" : "target-ringpacking-Debug-240b5ff0691ad40b5b6e.json",
+					"name" : "ringpacking",
+					"projectIndex" : 17
+				},
+				{
+					"directoryIndex" : 35,
+					"id" : "scheduler::@cd2603731302f0e0da5f",
+					"jsonFile" : "target-scheduler-Debug-ab6e5e61d0851afd8335.json",
+					"name" : "scheduler",
+					"projectIndex" : 18
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "scip::@a286e20a45db6014d0ce",
+					"jsonFile" : "target-scip-Debug-e594cda5f34cd24a7c31.json",
+					"name" : "scip",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "scip_check::@ab02e8aa32d2faa758e6",
+					"jsonFile" : "target-scip_check-Debug-79083bc5af24461d4d98.json",
+					"name" : "scip_check",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "scip_update_githash::@0b7d00e3864201260c11",
+					"jsonFile" : "target-scip_update_githash-Debug-f66f8fcd07b7fc76341e.json",
+					"name" : "scip_update_githash",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 18,
+					"id" : "scipmip::@2e82041ed7f5027facb2",
+					"jsonFile" : "target-scipmip-Debug-bf6131d0fcd39688fe81.json",
+					"name" : "scipmip",
+					"projectIndex" : 9
+				},
+				{
+					"directoryIndex" : 22,
+					"id" : "sciptsp::@a5c8d6021fa5c6247db3",
+					"jsonFile" : "target-sciptsp-Debug-654de9b23c97c995b75f.json",
+					"name" : "sciptsp",
+					"projectIndex" : 12
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "soplex::@1903274bad8f58c6ebee",
+					"jsonFile" : "target-soplex-Debug-62eed33432bd37a6f6f7.json",
+					"name" : "soplex",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "soplex_c_testing::@097aef582f09f705d61b",
+					"jsonFile" : "target-soplex_c_testing-Debug-79932d463b37ec39befb.json",
+					"name" : "soplex_c_testing",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "soplex_cleanup_config::@c94e8a27ac7afb3b4dd5",
+					"jsonFile" : "target-soplex_cleanup_config-Debug-25401573880ff178540c.json",
+					"name" : "soplex_cleanup_config",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "soplex_update_githash::@c94e8a27ac7afb3b4dd5",
+					"jsonFile" : "target-soplex_update_githash-Debug-cbfb1aa5a9cabdefbf2c.json",
+					"name" : "soplex_update_githash",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "spring::@cf62b141fff076a6c9e3",
+					"jsonFile" : "target-spring-Debug-083019ef91214f145f89.json",
+					"name" : "spring",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 26,
+					"id" : "sudoku::@480daa06ad7d857bd8fd",
+					"jsonFile" : "target-sudoku-Debug-9b383070932c53e40037.json",
+					"name" : "sudoku",
+					"projectIndex" : 14
+				},
+				{
+					"directoryIndex" : 43,
+					"id" : "ug_update_githash::@847ea563f97131f77342",
+					"jsonFile" : "target-ug_update_githash-Debug-2a9b6b9d5e21c12a4ac5.json",
+					"name" : "ug_update_githash",
+					"projectIndex" : 21
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "unittests::@0b7d00e3864201260c11",
+					"jsonFile" : "target-unittests-Debug-e1a0033870c28b6cc6ae.json",
+					"name" : "unittests",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 24,
+					"id" : "vrp::@f5ae98994a214c5d500d",
+					"jsonFile" : "target-vrp-Debug-b273e85758a6ccd254a9.json",
+					"name" : "vrp",
+					"projectIndex" : 13
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug",
+		"source" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

@@ -1,0 +1,3 @@
+"D:\CLion 2023.3.4\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\libscip.dir/objects.a
+"D:\CLion 2023.3.4\bin\mingw\bin\ar.exe" qc CMakeFiles\libscip.dir/objects.a @CMakeFiles\libscip.dir\objects1.rsp
+"D:\CLion 2023.3.4\bin\mingw\bin\g++.exe"  -Wno-psabi -g -shared -o ..\..\bin\libscip.dll -Wl,--out-implib,..\..\lib\libscip.dll.a -Wl,--major-image-version,9,--minor-image-version,1 -Wl,--whole-archive CMakeFiles\libscip.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\libscip.dir\linkLibs.rsp

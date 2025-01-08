@@ -1,0 +1,3 @@
+"D:\CLion 2023.3.4\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\vrp.dir/objects.a
+"D:\CLion 2023.3.4\bin\mingw\bin\ar.exe" qc CMakeFiles\vrp.dir/objects.a @CMakeFiles\vrp.dir\objects1.rsp
+"D:\CLion 2023.3.4\bin\mingw\bin\g++.exe"  -Wno-psabi -g -Wl,--whole-archive CMakeFiles\vrp.dir/objects.a -Wl,--no-whole-archive -o ..\..\..\bin\examples\vrp.exe -Wl,--out-implib,..\..\..\lib\libvrp.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\vrp.dir\linkLibs.rsp

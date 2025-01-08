@@ -1,0 +1,474 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "bin/libobjscip.dll"
+		},
+		{
+			"path" : "lib/libobjscip.dll.a"
+		},
+		{
+			"path" : "bin/libobjscip.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"add_compile_options",
+			"include_directories",
+			"find_package"
+		],
+		"files" : 
+		[
+			"scip/src/CMakeLists.txt",
+			"scip/CMakeLists.txt",
+			"CMakeLists.txt",
+			"cmake-build-debug/soplex-config.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 1031,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 215,
+				"parent" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 216,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 630,
+				"parent" : 2
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 6,
+				"parent" : 6
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 7,
+				"parent" : 6
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 50,
+				"parent" : 6
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 176,
+				"parent" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 419,
+				"parent" : 2
+			},
+			{
+				"file" : 3,
+				"parent" : 11
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 12,
+				"parent" : 12
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 477,
+				"parent" : 2
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -Wno-psabi -g -std=gnu++17 -fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-ffp-contract=off"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-pedantic"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-W"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wpointer-arith"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wcast-align"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wwrite-strings"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wshadow"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wredundant-decls"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wdisabled-optimization"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wno-long-long"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wno-unknown-pragmas"
+				},
+				{
+					"backtrace" : 3,
+					"fragment" : "-Wno-unused-parameter"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wnon-virtual-dtor"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wreorder"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Woverloaded-virtual"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wsign-promo"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wsynth"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wcast-qual"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wno-strict-overflow"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wno-psabi"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "libobjscip_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/scip/src/amplmp/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "C:/msys64/mingw64/include"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0C:/msys64/mingw64/include/regex.h"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/soplex/src"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/scip/src"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/zimpl/src"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/papilo/src"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/ug/src"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/gcg/src"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/scip/src/nauty"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "D:/Anaconda/Library/include"
+				},
+				{
+					"backtrace" : 14,
+					"path" : "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/soplex"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19
+			]
+		}
+	],
+	"id" : "libobjscip::@a286e20a45db6014d0ce",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "libobjscip",
+	"nameOnDisk" : "libobjscip.dll",
+	"paths" : 
+	{
+		"build" : "scip/src",
+		"source" : "scip/src"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objbenders.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objbenderscut.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objbranchrule.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objconshdlr.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objcutsel.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objdialog.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objdisp.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objeventhdlr.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objheur.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objmessagehdlr.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objnodesel.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objpresol.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objpricer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objprobdata.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objprop.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objreader.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objrelax.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objsepa.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objtable.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "scip/src/objscip/objvardata.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

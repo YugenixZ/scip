@@ -1,0 +1,3 @@
+"D:\CLion 2023.3.4\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\circlepacking.dir/objects.a
+"D:\CLion 2023.3.4\bin\mingw\bin\ar.exe" qc CMakeFiles\circlepacking.dir/objects.a @CMakeFiles\circlepacking.dir\objects1.rsp
+"D:\CLion 2023.3.4\bin\mingw\bin\gcc.exe" -g -Wl,--whole-archive CMakeFiles\circlepacking.dir/objects.a -Wl,--no-whole-archive -o ..\..\..\bin\examples\circlepacking.exe -Wl,--out-implib,..\..\..\lib\libcirclepacking.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\circlepacking.dir\linkLibs.rsp

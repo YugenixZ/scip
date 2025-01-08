@@ -1,0 +1,45 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"ug/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 405,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"bin/fscip.exe"
+			],
+			"targetId" : "fscip::@847ea563f97131f77342",
+			"targetIndex" : 40,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "ug",
+		"source" : "ug"
+	}
+}

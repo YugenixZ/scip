@@ -1,0 +1,367 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"soplex/src/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 213,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 214,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 216,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 231,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 237,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 267,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 268,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/soplex",
+			"paths" : 
+			[
+				"soplex/src/soplex/array.h",
+				"soplex/src/soplex/basevectors.h",
+				"soplex/src/soplex/changesoplex.hpp",
+				"soplex/src/soplex/classarray.h",
+				"soplex/src/soplex/classset.h",
+				"soplex/src/soplex/clufactor.h",
+				"soplex/src/soplex/clufactor.hpp",
+				"soplex/src/soplex/clufactor_rational.h",
+				"soplex/src/soplex/clufactor_rational.hpp",
+				"soplex/src/soplex/cring.h",
+				"soplex/src/soplex/dataarray.h",
+				"soplex/src/soplex/datahashtable.h",
+				"soplex/src/soplex/datakey.h",
+				"soplex/src/soplex/dataset.h",
+				"soplex/src/soplex/didxset.h",
+				"soplex/src/soplex/dsvector.h",
+				"soplex/src/soplex/dsvectorbase.h",
+				"soplex/src/soplex/dvector.h",
+				"soplex/src/soplex/enter.hpp",
+				"soplex/src/soplex/exceptions.h",
+				"soplex/src/soplex/fmt.hpp",
+				"soplex/src/soplex/idlist.h",
+				"soplex/src/soplex/idxset.h",
+				"soplex/src/soplex/islist.h",
+				"soplex/src/soplex/leave.hpp",
+				"soplex/src/soplex/lpcol.h",
+				"soplex/src/soplex/lpcolbase.h",
+				"soplex/src/soplex/lpcolset.h",
+				"soplex/src/soplex/lpcolsetbase.h",
+				"soplex/src/soplex/lprow.h",
+				"soplex/src/soplex/lprowbase.h",
+				"soplex/src/soplex/lprowset.h",
+				"soplex/src/soplex/lprowsetbase.h",
+				"soplex/src/soplex/mpsinput.h",
+				"soplex/src/soplex/nameset.h",
+				"soplex/src/soplex/notimer.h",
+				"soplex/src/soplex/random.h",
+				"soplex/src/soplex/rational.h",
+				"soplex/src/soplex/ratrecon.h",
+				"soplex/src/soplex/ratrecon.hpp",
+				"soplex/src/soplex/slinsolver.h",
+				"soplex/src/soplex/slinsolver_rational.h",
+				"soplex/src/soplex/slufactor.h",
+				"soplex/src/soplex/slufactor.hpp",
+				"soplex/src/soplex/slufactor_rational.h",
+				"soplex/src/soplex/slufactor_rational.hpp",
+				"soplex/src/soplex/sol.h",
+				"soplex/src/soplex/solbase.h",
+				"soplex/src/soplex/solverational.hpp",
+				"soplex/src/soplex/solvereal.hpp",
+				"soplex/src/soplex/sorter.h",
+				"soplex/src/soplex/spxalloc.h",
+				"soplex/src/soplex/spxautopr.h",
+				"soplex/src/soplex/spxautopr.hpp",
+				"soplex/src/soplex/spxbasis.h",
+				"soplex/src/soplex/spxbasis.hpp",
+				"soplex/src/soplex/spxboundflippingrt.h",
+				"soplex/src/soplex/spxboundflippingrt.hpp",
+				"soplex/src/soplex/spxbounds.hpp",
+				"soplex/src/soplex/spxchangebasis.hpp",
+				"soplex/src/soplex/spxdantzigpr.h",
+				"soplex/src/soplex/spxdantzigpr.hpp",
+				"soplex/src/soplex/spxdefaultrt.h",
+				"soplex/src/soplex/spxdefaultrt.hpp",
+				"soplex/src/soplex/spxdefines.h",
+				"soplex/src/soplex/spxdefines.hpp",
+				"soplex/src/soplex/spxdesc.hpp",
+				"soplex/src/soplex/spxdevexpr.h",
+				"soplex/src/soplex/spxdevexpr.hpp",
+				"soplex/src/soplex/spxequilisc.h",
+				"soplex/src/soplex/spxequilisc.hpp",
+				"soplex/src/soplex/spxfastrt.h",
+				"soplex/src/soplex/spxfastrt.hpp",
+				"soplex/src/soplex/spxfileio.h",
+				"soplex/src/soplex/spxfileio.hpp",
+				"soplex/src/soplex/spxgeometsc.h",
+				"soplex/src/soplex/spxgeometsc.hpp",
+				"soplex/src/soplex/spxgithash.h",
+				"soplex/src/soplex/spxharrisrt.h",
+				"soplex/src/soplex/spxharrisrt.hpp",
+				"soplex/src/soplex/spxhybridpr.h",
+				"soplex/src/soplex/spxhybridpr.hpp",
+				"soplex/src/soplex/spxid.h",
+				"soplex/src/soplex/spxleastsqsc.h",
+				"soplex/src/soplex/spxleastsqsc.hpp",
+				"soplex/src/soplex/spxlp.h",
+				"soplex/src/soplex/spxlpbase.h",
+				"soplex/src/soplex/spxlpbase_rational.hpp",
+				"soplex/src/soplex/spxlpbase_real.hpp",
+				"soplex/src/soplex/spxmainsm.h",
+				"soplex/src/soplex/spxmainsm.hpp",
+				"soplex/src/soplex/spxout.h",
+				"soplex/src/soplex/spxpapilo.h",
+				"soplex/src/soplex/spxparmultpr.h",
+				"soplex/src/soplex/spxparmultpr.hpp",
+				"soplex/src/soplex/spxpricer.h",
+				"soplex/src/soplex/spxquality.hpp",
+				"soplex/src/soplex/spxratiotester.h",
+				"soplex/src/soplex/spxscaler.h",
+				"soplex/src/soplex/spxscaler.hpp",
+				"soplex/src/soplex/spxshift.hpp",
+				"soplex/src/soplex/spxsimplifier.h",
+				"soplex/src/soplex/spxsolve.hpp",
+				"soplex/src/soplex/spxsolver.h",
+				"soplex/src/soplex/spxsolver.hpp",
+				"soplex/src/soplex/spxstarter.h",
+				"soplex/src/soplex/spxstarter.hpp",
+				"soplex/src/soplex/spxsteepexpr.h",
+				"soplex/src/soplex/spxsteeppr.h",
+				"soplex/src/soplex/spxsteeppr.hpp",
+				"soplex/src/soplex/spxsumst.h",
+				"soplex/src/soplex/spxsumst.hpp",
+				"soplex/src/soplex/spxvecs.hpp",
+				"soplex/src/soplex/spxvectorst.h",
+				"soplex/src/soplex/spxvectorst.hpp",
+				"soplex/src/soplex/spxweightpr.h",
+				"soplex/src/soplex/spxweightpr.hpp",
+				"soplex/src/soplex/spxweightst.h",
+				"soplex/src/soplex/spxweightst.hpp",
+				"soplex/src/soplex/spxwritestate.hpp",
+				"soplex/src/soplex/ssvector.h",
+				"soplex/src/soplex/ssvectorbase.h",
+				"soplex/src/soplex/stablesum.h",
+				"soplex/src/soplex/statistics.h",
+				"soplex/src/soplex/statistics.hpp",
+				"soplex/src/soplex/svector.h",
+				"soplex/src/soplex/svectorbase.h",
+				"soplex/src/soplex/svset.h",
+				"soplex/src/soplex/svsetbase.h",
+				"soplex/src/soplex/testsoplex.hpp",
+				"soplex/src/soplex/timer.h",
+				"soplex/src/soplex/timerfactory.h",
+				"soplex/src/soplex/unitvector.h",
+				"soplex/src/soplex/unitvectorbase.h",
+				"soplex/src/soplex/updatevector.h",
+				"soplex/src/soplex/updatevector.hpp",
+				"soplex/src/soplex/usertimer.h",
+				"soplex/src/soplex/validation.h",
+				"soplex/src/soplex/validation.hpp",
+				"soplex/src/soplex/vector.h",
+				"soplex/src/soplex/vectorbase.h",
+				"soplex/src/soplex/wallclocktimer.h",
+				"cmake-build-debug/soplex/soplex/config.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"soplex/src/soplex.h",
+				"soplex/src/soplex.hpp",
+				"soplex/src/soplex_interface.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "include/soplex/external/fmt",
+			"paths" : 
+			[
+				"soplex/src/soplex/external/fmt/chrono.h",
+				"soplex/src/soplex/external/fmt/color.h",
+				"soplex/src/soplex/external/fmt/compile.h",
+				"soplex/src/soplex/external/fmt/core.h",
+				"soplex/src/soplex/external/fmt/format-inl.h",
+				"soplex/src/soplex/external/fmt/format.h",
+				"soplex/src/soplex/external/fmt/locale.h",
+				"soplex/src/soplex/external/fmt/os.h",
+				"soplex/src/soplex/external/fmt/ostream.h",
+				"soplex/src/soplex/external/fmt/posix.h",
+				"soplex/src/soplex/external/fmt/printf.h",
+				"soplex/src/soplex/external/fmt/ranges.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "include/soplex/external/zstr",
+			"paths" : 
+			[
+				"soplex/src/soplex/external/zstr/zstr.hpp",
+				"soplex/src/soplex/external/zstr/strict_fstream.hpp"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"bin/soplex.exe"
+			],
+			"targetId" : "soplex::@1903274bad8f58c6ebee",
+			"targetIndex" : 70,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/libsoplex.a"
+			],
+			"targetId" : "libsoplex::@1903274bad8f58c6ebee",
+			"targetIndex" : 56,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/libsoplex-pic.a"
+			],
+			"targetId" : "libsoplex-pic::@1903274bad8f58c6ebee",
+			"targetIndex" : 57,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"lib/libsoplexshared.dll.a"
+			],
+			"targetId" : "libsoplexshared::@1903274bad8f58c6ebee",
+			"targetIndex" : 58,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"bin/libsoplexshared.dll"
+			],
+			"targetId" : "libsoplexshared::@1903274bad8f58c6ebee",
+			"targetIndex" : 58,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/soplex",
+			"exportName" : "soplex-targets",
+			"exportTargets" : 
+			[
+				{
+					"id" : "soplex::@1903274bad8f58c6ebee",
+					"index" : 70
+				},
+				{
+					"id" : "libsoplex::@1903274bad8f58c6ebee",
+					"index" : 56
+				},
+				{
+					"id" : "libsoplex-pic::@1903274bad8f58c6ebee",
+					"index" : 57
+				},
+				{
+					"id" : "libsoplexshared::@1903274bad8f58c6ebee",
+					"index" : 58
+				}
+			],
+			"paths" : 
+			[
+				"soplex/src/CMakeFiles/Export/7b30a661feffd7bbb1d77d2bef836267/soplex-targets.cmake"
+			],
+			"type" : "export"
+		},
+		{
+			"backtrace" : 7,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/soplex",
+			"paths" : 
+			[
+				"cmake-build-debug/soplex/CMakeFiles/soplex-config.cmake",
+				"cmake-build-debug/soplex-config-version.cmake"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "soplex/src",
+		"source" : "soplex/src"
+	}
+}

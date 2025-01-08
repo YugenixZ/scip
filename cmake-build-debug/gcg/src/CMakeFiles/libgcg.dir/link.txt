@@ -1,0 +1,3 @@
+"D:\CLion 2023.3.4\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\libgcg.dir/objects.a
+"D:\CLion 2023.3.4\bin\mingw\bin\ar.exe" qc CMakeFiles\libgcg.dir/objects.a @CMakeFiles\libgcg.dir\objects1.rsp
+"D:\CLion 2023.3.4\bin\mingw\bin\g++.exe"  -Wno-psabi -g -shared -o ..\..\bin\libgcg.dll -Wl,--out-implib,..\..\lib\libgcg.dll.a -Wl,--major-image-version,3,--minor-image-version,6 -Wl,--whole-archive CMakeFiles\libgcg.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\libgcg.dir\linkLibs.rsp

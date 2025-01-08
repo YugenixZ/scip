@@ -1,0 +1,205 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_dependencies"
+		],
+		"files" : 
+		[
+			"scip/examples/CMakeLists.txt",
+			"scip/examples/Binpacking/CMakeLists.txt",
+			"scip/examples/Eventhdlr/CMakeLists.txt",
+			"scip/examples/CallableLibrary/CMakeLists.txt",
+			"scip/examples/GMI/CMakeLists.txt",
+			"scip/examples/LOP/CMakeLists.txt",
+			"scip/examples/Queens/CMakeLists.txt",
+			"scip/examples/MIPSolver/CMakeLists.txt",
+			"scip/examples/Relaxator/CMakeLists.txt",
+			"scip/examples/VRP/CMakeLists.txt",
+			"scip/examples/TSP/CMakeLists.txt",
+			"scip/examples/Sudoku/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 31,
+				"parent" : 2
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 22,
+				"parent" : 4
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 39,
+				"parent" : 6
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 27,
+				"parent" : 8
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 23,
+				"parent" : 10
+			},
+			{
+				"file" : 6
+			},
+			{
+				"command" : 1,
+				"file" : 6,
+				"line" : 21,
+				"parent" : 12
+			},
+			{
+				"file" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 7,
+				"line" : 20,
+				"parent" : 14
+			},
+			{
+				"file" : 8
+			},
+			{
+				"command" : 1,
+				"file" : 8,
+				"line" : 22,
+				"parent" : 16
+			},
+			{
+				"file" : 9
+			},
+			{
+				"command" : 1,
+				"file" : 9,
+				"line" : 21,
+				"parent" : 18
+			},
+			{
+				"file" : 10
+			},
+			{
+				"command" : 1,
+				"file" : 10,
+				"line" : 35,
+				"parent" : 20
+			},
+			{
+				"file" : 11
+			},
+			{
+				"command" : 1,
+				"file" : 11,
+				"line" : 21,
+				"parent" : 22
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "binpacking::@2cf5ca05bfff08dccdec"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "eventhdlr::@b32201dbcf58c3d9e376"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "circlepacking::@cf62b141fff076a6c9e3"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "spring::@cf62b141fff076a6c9e3"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "gastrans::@cf62b141fff076a6c9e3"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "brachistochrone::@cf62b141fff076a6c9e3"
+		},
+		{
+			"backtrace" : 9,
+			"id" : "gmi::@a7eb2c916256339baa6a"
+		},
+		{
+			"backtrace" : 11,
+			"id" : "lop::@965ccb36b5d04966370c"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "queens::@4c0e3a27db9a84afc4e0"
+		},
+		{
+			"backtrace" : 15,
+			"id" : "scipmip::@2e82041ed7f5027facb2"
+		},
+		{
+			"backtrace" : 17,
+			"id" : "relaxator::@53cefd117badc5356269"
+		},
+		{
+			"backtrace" : 19,
+			"id" : "vrp::@f5ae98994a214c5d500d"
+		},
+		{
+			"backtrace" : 21,
+			"id" : "sciptsp::@a5c8d6021fa5c6247db3"
+		},
+		{
+			"backtrace" : 23,
+			"id" : "sudoku::@480daa06ad7d857bd8fd"
+		}
+	],
+	"id" : "examples::@1227f9aa57d6d6022833",
+	"name" : "examples",
+	"paths" : 
+	{
+		"build" : "scip/examples",
+		"source" : "scip/examples"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

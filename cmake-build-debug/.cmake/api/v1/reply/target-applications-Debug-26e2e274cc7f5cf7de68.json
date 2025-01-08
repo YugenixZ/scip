@@ -1,0 +1,109 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"add_dependencies"
+		],
+		"files" : 
+		[
+			"scip/applications/CMakeLists.txt",
+			"scip/applications/Coloring/CMakeLists.txt",
+			"scip/applications/MinIISC/CMakeLists.txt",
+			"scip/applications/Ringpacking/CMakeLists.txt",
+			"scip/applications/Scheduler/CMakeLists.txt",
+			"scip/applications/CycleClustering/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 36,
+				"parent" : 2
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 29,
+				"parent" : 4
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 30,
+				"parent" : 6
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 28,
+				"parent" : 8
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 39,
+				"parent" : 10
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "coloring::@9f39737533cc86663cef"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "miniisc::@db7dee4b2dbc099f4a5e"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "ringpacking::@c62ab343b9d2f95101f4"
+		},
+		{
+			"backtrace" : 9,
+			"id" : "scheduler::@cd2603731302f0e0da5f"
+		},
+		{
+			"backtrace" : 11,
+			"id" : "cycleclustering::@1f08b1f930b118d11408"
+		}
+	],
+	"id" : "applications::@cdb1af8ced386d994730",
+	"name" : "applications",
+	"paths" : 
+	{
+		"build" : "scip/applications",
+		"source" : "scip/applications"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

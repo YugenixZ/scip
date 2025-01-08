@@ -1,0 +1,35 @@
+{
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target"
+		],
+		"files" : 
+		[
+			"gcg/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 278,
+				"parent" : 0
+			}
+		]
+	},
+	"id" : "gcg_unittests::@c4eb4bd3fa38c1c523fb",
+	"name" : "gcg_unittests",
+	"paths" : 
+	{
+		"build" : "gcg",
+		"source" : "gcg"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}
