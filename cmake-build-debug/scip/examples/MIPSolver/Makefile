@@ -204,6 +204,30 @@ scipmip/fast:
 	cd /d D:\scipoptsuite-9.1.0\scipoptsuite-9.1.0\cmake-build-debug && $(MAKE) $(MAKESILENT) -f scip\examples\MIPSolver\CMakeFiles\scipmip.dir\build.make scip/examples/MIPSolver/CMakeFiles/scipmip.dir/build
 .PHONY : scipmip/fast
 
+__/__/src/scip/branch_gd.obj: __/__/src/scip/branch_gd.cpp.obj
+.PHONY : __/__/src/scip/branch_gd.obj
+
+# target to build an object file
+__/__/src/scip/branch_gd.cpp.obj:
+	cd /d D:\scipoptsuite-9.1.0\scipoptsuite-9.1.0\cmake-build-debug && $(MAKE) $(MAKESILENT) -f scip\examples\MIPSolver\CMakeFiles\scipmip.dir\build.make scip/examples/MIPSolver/CMakeFiles/scipmip.dir/__/__/src/scip/branch_gd.cpp.obj
+.PHONY : __/__/src/scip/branch_gd.cpp.obj
+
+__/__/src/scip/branch_gd.i: __/__/src/scip/branch_gd.cpp.i
+.PHONY : __/__/src/scip/branch_gd.i
+
+# target to preprocess a source file
+__/__/src/scip/branch_gd.cpp.i:
+	cd /d D:\scipoptsuite-9.1.0\scipoptsuite-9.1.0\cmake-build-debug && $(MAKE) $(MAKESILENT) -f scip\examples\MIPSolver\CMakeFiles\scipmip.dir\build.make scip/examples/MIPSolver/CMakeFiles/scipmip.dir/__/__/src/scip/branch_gd.cpp.i
+.PHONY : __/__/src/scip/branch_gd.cpp.i
+
+__/__/src/scip/branch_gd.s: __/__/src/scip/branch_gd.cpp.s
+.PHONY : __/__/src/scip/branch_gd.s
+
+# target to generate assembly for a file
+__/__/src/scip/branch_gd.cpp.s:
+	cd /d D:\scipoptsuite-9.1.0\scipoptsuite-9.1.0\cmake-build-debug && $(MAKE) $(MAKESILENT) -f scip\examples\MIPSolver\CMakeFiles\scipmip.dir\build.make scip/examples/MIPSolver/CMakeFiles/scipmip.dir/__/__/src/scip/branch_gd.cpp.s
+.PHONY : __/__/src/scip/branch_gd.cpp.s
+
 src/cppmain.obj: src/cppmain.cpp.obj
 .PHONY : src/cppmain.obj
 
@@ -244,6 +268,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... test
 	@echo ... scipmip
+	@echo ... __/__/src/scip/branch_gd.obj
+	@echo ... __/__/src/scip/branch_gd.i
+	@echo ... __/__/src/scip/branch_gd.s
 	@echo ... src/cppmain.obj
 	@echo ... src/cppmain.i
 	@echo ... src/cppmain.s

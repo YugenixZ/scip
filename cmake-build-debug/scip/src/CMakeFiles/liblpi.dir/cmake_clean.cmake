@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/liblpi.dir/lpi/lpi_spx2.cpp.obj.d"
   "CMakeFiles/liblpi.dir/scip/bitencode.c.obj"
   "CMakeFiles/liblpi.dir/scip/bitencode.c.obj.d"
+  "CMakeFiles/liblpi.dir/scip/branch_gd.cpp.obj"
+  "CMakeFiles/liblpi.dir/scip/branch_gd.cpp.obj.d"
   "CMakeFiles/liblpi.dir/scip/message.c.obj"
   "CMakeFiles/liblpi.dir/scip/message.c.obj.d"
 )

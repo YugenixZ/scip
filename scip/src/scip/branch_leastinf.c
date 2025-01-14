@@ -43,7 +43,7 @@
 
 #define BRANCHRULE_NAME          "leastinf"
 #define BRANCHRULE_DESC          "least infeasible branching"
-#define BRANCHRULE_PRIORITY      50
+#define BRANCHRULE_PRIORITY      1
 #define BRANCHRULE_MAXDEPTH      -1
 #define BRANCHRULE_MAXBOUNDDIST  1.0
 

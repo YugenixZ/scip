@@ -36,7 +36,19 @@
 
 #include "scip/scip.h"
 #include "scip/branch.h"
+#include <vector>
+using namespace std;
 
+typedef struct {
+    SCIP* model_sub;
+    vector<SCIP_VAR*> p;
+    SCIP_VAR* s_L;
+    vector<SCIP_VAR*> q;
+    SCIP_VAR* s_R;
+    vector<SCIP_VAR*> pi_plus;
+    vector<SCIP_VAR*> pi_minus;
+    SCIP_VAR* pi0;
+} SubmodelDatas;
 
 #ifdef __cplusplus
 extern "C" {

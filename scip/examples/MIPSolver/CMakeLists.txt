@@ -12,7 +12,8 @@ endif()
 include_directories(${SCIP_INCLUDE_DIRS})
 
 add_executable(scipmip
-   src/cppmain.cpp)
+   src/cppmain.cpp
+        ../../src/scip/branch_gd.cpp)
 
 target_link_libraries(scipmip ${SCIP_LIBRARIES})
 

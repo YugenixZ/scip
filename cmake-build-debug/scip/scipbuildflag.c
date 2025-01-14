@@ -37,7 +37,7 @@ const char* SCIPgetBuildFlags(
    )
 {
    return " ARCH=AMD64\n\
- OSTYPE=Windows-10.0.22631\n\
+ OSTYPE=Windows-10.0.26100\n\
  COMP=GNU 13.1.0\n\
  BUILD=Debug\n\
  DEBUGSOL=OFF\n\

@@ -1035,7 +1035,8 @@ add_library(liblpi EXCLUDE_FROM_ALL
     ${lpisources}
     scip/bitencode.c
     blockmemshell/memory.c
-    scip/message.c)
+    scip/message.c
+        scip/branch_gd.cpp)
 setLibProperties(liblpi "lpi")
 
 add_library(libscip ${scipsources} ${objscipsources} ${lpisources} ${tpisources} ${symsources})
