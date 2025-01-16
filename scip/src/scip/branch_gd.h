@@ -33,11 +33,18 @@
 #ifndef __SCIP_BRANCH_GD_H__
 #define __SCIP_BRANCH_GD_H__
 
-
+#include "scip/type_retcode.h"
 #include "scip/scip.h"
 #include "scip/branch.h"
 #include <vector>
+
 using namespace std;
+
+typedef struct {
+    vector<vector<SCIP_Real>> A;   // constraint matrix
+    vector<SCIP_Real> b;            // right hand side vector
+    vector<SCIP_Real> c;            // objective vector
+} MatrixData;
 
 typedef struct {
     SCIP* model_sub;
@@ -48,7 +55,17 @@ typedef struct {
     vector<SCIP_VAR*> pi_plus;
     vector<SCIP_VAR*> pi_minus;
     SCIP_VAR* pi0;
-} SubmodelDatas;
+} SubmodelVars;
+
+typedef struct {
+   SCIP_Real zl;
+   vector<int> pi_solution;
+   int pi0_solution;
+   SCIP_Real est_l;
+   SCIP_Real est_r;
+   string status_l;
+   string status_r;
+} Submodel_sols;
 
 #ifdef __cplusplus
 extern "C" {
