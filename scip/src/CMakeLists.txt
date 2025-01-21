@@ -416,6 +416,7 @@ set(objscipsources
     objscip/objsepa.cpp
     objscip/objtable.cpp
     objscip/objvardata.cpp
+    objscip/branch_gd.cpp
 )
 
 set(lpisources
@@ -466,6 +467,7 @@ set(objscipheaders
     objscip/objvardata.h
     objscip/type_objcloneable.h
     objscip/type_objprobcloneable.h
+    objscip/branch_gd.h
 )
 
 set(scipheaders
@@ -1036,7 +1038,7 @@ add_library(liblpi EXCLUDE_FROM_ALL
     scip/bitencode.c
     blockmemshell/memory.c
     scip/message.c
-        scip/branch_gd.cpp)
+    )
 setLibProperties(liblpi "lpi")
 
 add_library(libscip ${scipsources} ${objscipsources} ${lpisources} ${tpisources} ${symsources})

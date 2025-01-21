@@ -36,14 +36,14 @@
 #include "scip/type_retcode.h"
 #include "scip/scip.h"
 #include "scip/branch.h"
+#include <string>
 #include <vector>
-
 using namespace std;
 
 typedef struct {
-    vector<vector<SCIP_Real>> A;   // constraint matrix
-    vector<SCIP_Real> b;            // right hand side vector
-    vector<SCIP_Real> c;            // objective vector
+    std::vector<std::vector<SCIP_Real>> A;   // constraint matrix
+    std::vector<SCIP_Real> b;            // right hand side vector
+    std::vector<SCIP_Real> c;            // objective vector
 } MatrixData;
 
 typedef struct {
@@ -77,8 +77,8 @@ extern "C" {
  */
 SCIP_EXPORT
 SCIP_RETCODE SCIPincludeBranchruleGeneralDisjunction(
-   SCIP*                 scip                /**< SCIP data structure */
-   );
+        SCIP*                 scip                /**< SCIP data structure */
+);
 
 /**@addtogroup BRANCHINGRULES
  *

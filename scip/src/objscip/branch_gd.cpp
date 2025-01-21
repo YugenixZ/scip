@@ -35,12 +35,13 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <scip/scip_var.h>
-#include <scip/scip_branch.h>
-#include <scip/branch_gd.h>
-#include <objscip/objbranchrule.h>
-#include <scip/scipdefplugins.h>
-#include "struct_lp.h"
+#include "scip/scip_var.h"
+#include "scip/scip_branch.h"
+#include "branch_gd.h"
+#include "objbranchrule.h"
+#include "scip/scipdefplugins.h"
+#include "scip/struct_lp.h"
+#include "scip/scip.h"
 
 
 #define scip_name_            "gd"
@@ -51,12 +52,15 @@
 
 using namespace std;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /*
  * Data structures
  */
 /** branching rule data */
-struct SCIP_BranchruleData {
-};
+//struct SCIP_BranchruleData {
+//};
 /*
  * Local methods
  */
@@ -128,14 +132,14 @@ MatrixData getConstraintMatrix(SCIP* scip)
       SCIP_Real ub = SCIPcolGetUb(cols[i]);
       if (lb > -SCIPinfinity(scip))
       {
-         vector<SCIP_Real> row(ncols, 0.0);
+         std::vector<SCIP_Real> row(ncols, 0.0);
          row[i] = 1.0;
          LP_data.A.push_back(row);
          LP_data.b.push_back(lb);
       }
       if (ub < SCIPinfinity(scip))
       {
-         vector<SCIP_Real> row(ncols, 0.0);
+         std::vector<SCIP_Real> row(ncols, 0.0);
          row[i] = -1.0;
          LP_data.A.push_back(row);
          LP_data.b.push_back(-ub);
@@ -550,7 +554,7 @@ vector<Submodel_sols> submodel_solve(
    Submodel_sols result;
 
    if (feasible_zl.empty()){
-      result = {SCIP_INVALID, {}, static_cast<int>(SCIP_INVALID), NULL, NULL, NULL, NULL};
+      result = {SCIP_INVALID, {}, static_cast<int>(SCIP_INVALID), NULL, NULL, "NULL", "NULL"};
    } else {
       SCIP_Real best_zl = *max_element(feasible_zl.begin(), feasible_zl.end());
       auto idx_zl = distance(feasible_zl.begin(), find(feasible_zl.begin(), feasible_zl.end(), best_zl));
@@ -657,160 +661,93 @@ SCIP_RETCODE createBranchingConstraint(
 /*
  * Callback methods of branching rule
  */
-/** copy method for branchrule plugins (called when SCIP copies plugins) */
-static
-SCIP_DECL_BRANCHCOPY(branchCopyGeneraldisjunction)
-{  /*lint --e{715}*/
-   assert(scip != nullptr);
-   assert(branchrule != nullptr);
-   assert(strcmp(SCIPbranchruleGetName(branchrule), scip_name_) == 0);
 
-   /* call inclusion method of branching rule */
-   SCIP_CALL( SCIPincludeBranchruleGeneralDisjunction(scip) );
-   return SCIP_OKAY;
-}
+class BranchruleGeneralDisjunction : public scip::ObjBranchrule {
+public:
+    explicit BranchruleGeneralDisjunction(SCIP* scip)
+            : ObjBranchrule(scip, scip_name_, scip_desc_, scip_priority_, scip_maxdepth_, scip_maxbounddist_) {}
+    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp);
 
-//
-///** destructor of branching rule to free user data (called when SCIP is exiting) */
-//#if 0
-//static
-//SCIP_DECL_BRANCHFREE(branchFreeXyz)
-//{  /*lint --e{715}*/
-//   SCIPerrorMessage("method of xyz branching rule not implemented yet\n");
-//   SCIPABORT(); /*lint --e{527}*/
-//
+};
+//SCIP_DECL_BRANCHCOPY(branchcopygeneraldisjunction) {
+//   SCIP_CALL(SCIPincludeObjBranchrule(scip, new BranchruleGeneralDisjunction(scip), TRUE));
 //   return SCIP_OKAY;
 //}
-//#else
-//#define branchFreeXyz NULL
-//#endif
-//
-//
-///** initialization method of branching rule (called after problem was transformed) */
-//#if 0
-//static
-//SCIP_DECL_BRANCHINIT(branchInitXyz)
-//{  /*lint --e{715}*/
-//   SCIPerrorMessage("method of xyz branching rule not implemented yet\n");
-//   SCIPABORT(); /*lint --e{527}*/
-//
-//   return SCIP_OKAY;
-//}
-//#else
-//#define branchInitXyz NULL
-//#endif
-//
-//
-///** deinitialization method of branching rule (called before transformed problem is freed) */
-//#if 0
-//static
-//SCIP_DECL_BRANCHEXIT(branchExitXyz)
-//{  /*lint --e{715}*/
-//
-//   SCIPerrorMessage("method of xyz branching rule not implemented yet\n");
-//   SCIPABORT(); /*lint --e{527}*/
-//
-//   return SCIP_OKAY;
-//}
-//#else
-//#define branchExitXyz NULL
-//#endif
-//
-//
-///** solving process initialization method of branching rule (called when branch and bound process is about to begin) */
-//#if 0
-//static
-//SCIP_DECL_BRANCHINITSOL(branchInitsolXyz)
-//{  /*lint --e{715}*/
-//   SCIPerrorMessage("method of xyz branching rule not implemented yet\n");
-//   SCIPABORT(); /*lint --e{527}*/
-//
-//   return SCIP_OKAY;
-//}
-//#else
-//#define branchInitsolXyz NULL
-//#endif
-//
-//
-///** solving process deinitialization method of branching rule (called before branch and bound process data is freed) */
-//#if 0
-//static
-//SCIP_DECL_BRANCHEXITSOL(branchExitsolXyz)
-//{  /*lint --e{715}*/
-//   SCIPerrorMessage("method of xyz branching rule not implemented yet\n");
-//   SCIPABORT(); /*lint --e{527}*/
-//
-//   return SCIP_OKAY;
-//}
-//#else
-//#define branchExitsolXyz NULL
-//#endif
-
 /** branching execution method for fractional LP solutions */
-static
-SCIP_DECL_BRANCHEXECLP(branchExeclpgd)
-{  /*lint --e{715}*/
-   MatrixData LP_data = getConstraintMatrix(scip);
-   vector<vector<SCIP_Real>> A = LP_data.A;
-   vector<SCIP_Real> b = LP_data.b;
-   vector<SCIP_Real> c = LP_data.c;
-   SCIP_Node *curr_Node = get_information(scip);
-   SCIP_COL** cols_lp = SCIPgetLPCols(scip);
-   vector<SCIP_VAR*> vars_lp(A.size());
-   for (size_t i = 0; i < A.size(); ++i) {
-      vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
-   }
-   size_t m = A.size();
-   size_t n = A[0].size();
-   int M = 1;
-   int k = 2;
-   SCIP_Real zl = SCIPgetLPObjval(scip);
-   SCIP_Real delta = 0.05;
-   SCIP_Real zl_low = zl;
-   SCIP_Real zl_high = SCIPinfinity(scip);
+SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
+   {  /*lint --e{715}*/
+      MatrixData LP_data = getConstraintMatrix(scip);
+      std::vector<std::vector<SCIP_Real>> A = LP_data.A;
+      std::vector<SCIP_Real> b = LP_data.b;
+      std::vector<SCIP_Real> c = LP_data.c;
+      SCIP_Node *curr_Node = get_information(scip);
+      SCIP_COL** cols_lp = SCIPgetLPCols(scip);
+      std::vector<SCIP_VAR*> vars_lp(A.size());
+      for (size_t i = 0; i < A.size(); ++i) {
+         vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
+      }
+      size_t m = A.size();
+      size_t n = A[0].size();
+      int M = 1;
+      int k = 2;
+      SCIP_Real zl = SCIPgetLPObjval(scip);
+      SCIP_Real delta = 0.05;
+      SCIP_Real zl_low = zl;
+      SCIP_Real zl_high = SCIPinfinity(scip);
 
-   SubmodelVars submodel_datas = submodel_create(scip, A, b, c, M, k, delta, zl);
-   vector<Submodel_sols> final_results = submodel_solve(submodel_datas, zl_low, zl_high, m, n, delta, A, b, c);
-   SCIP_Real est_l = final_results[0].est_l;
-   SCIP_Real est_r = final_results[0].est_r;
-   string status_l = final_results[0].status_l;
-   string status_r = final_results[0].status_r;
-   [[maybe_unused]] SCIP_Real downprio = 1.0;
-   if ( est_l == NULL || est_r == NULL) {
-      *result = SCIP_DIDNOTRUN;
-      return SCIP_OKAY;
-   } else if (status_l == "updated_zl" and status_r == "updated_zl") {
-      SCIP_Bool CreateChild = TRUE;
-      SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
-      SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
-      *result = SCIP_BRANCHED;
-      return SCIP_OKAY;
-   }else if (status_l == "infeasible" && status_r != "updated_zl") {
-      std::cout << "Infeasible left child" << std::endl;
-      *result = SCIP_CUTOFF;
-      return SCIP_OKAY;
-   } else if (status_l != "updated_zl" && status_r == "infeasible") {
-      std::cout << "Infeasible right child" << std::endl;
-      *result = SCIP_CUTOFF;
-      return SCIP_OKAY;
-   } else if (status_l == "updated_zl" && status_r != "updated_zl") {
-      SCIP_Bool CreateChild = FALSE;
-      SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
-      std::cout << "Only Left constraint added:" << std::endl;
-      *result = SCIP_BRANCHED;
-      return SCIP_OKAY;
-   } else if (status_r == "updated_zl" && status_l != "updated_zl") {
-      SCIP_Bool CreateChild = FALSE;
-      SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
-      std::cout << "Only Right constraint added:" << std::endl;
-      *result = SCIP_BRANCHED;
-      return SCIP_OKAY;
-   } else {
-      std::cout << "Both children are not added" << std::endl;
-      *result = SCIP_DIDNOTFIND;
-      return SCIP_OKAY;
+      SubmodelVars submodel_datas = submodel_create(scip, A, b, c, M, k, delta, zl);
+      std::vector<Submodel_sols> final_results = submodel_solve(submodel_datas, zl_low, zl_high, m, n, delta, A, b, c);
+      SCIP_Real est_l = final_results[0].est_l;
+      SCIP_Real est_r = final_results[0].est_r;
+      string status_l = final_results[0].status_l;
+      string status_r = final_results[0].status_r;
+      [[maybe_unused]] SCIP_Real downprio = 1.0;
+      if ( status_l == "NULL" || status_r == "NULL") {
+         *result = SCIP_DIDNOTRUN;
+         return SCIP_OKAY;
+      } else if (status_l == "updated_zl" and status_r == "updated_zl") {
+         SCIP_Bool CreateChild = TRUE;
+         SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
+         SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
+         *result = SCIP_BRANCHED;
+         return SCIP_OKAY;
+      }else if (status_l == "infeasible" && status_r != "updated_zl") {
+         std::cout << "Infeasible left child" << std::endl;
+         *result = SCIP_CUTOFF;
+         return SCIP_OKAY;
+      } else if (status_l != "updated_zl" && status_r == "infeasible") {
+         std::cout << "Infeasible right child" << std::endl;
+         *result = SCIP_CUTOFF;
+         return SCIP_OKAY;
+      } else if (status_l == "updated_zl" && status_r != "updated_zl") {
+         SCIP_Bool CreateChild = FALSE;
+         SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
+         std::cout << "Only Left constraint added:" << std::endl;
+         *result = SCIP_BRANCHED;
+         return SCIP_OKAY;
+      } else if (status_r == "updated_zl" && status_l != "updated_zl") {
+         SCIP_Bool CreateChild = FALSE;
+         SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
+         std::cout << "Only Right constraint added:" << std::endl;
+         *result = SCIP_BRANCHED;
+         return SCIP_OKAY;
+      } else {
+         std::cout << "Both children are not added" << std::endl;
+         *result = SCIP_DIDNOTFIND;
+         return SCIP_OKAY;
+      };
    };
 };
+
+/** creates the general disjunction branching rule and includes it in SCIP */
+extern "C" SCIP_RETCODE SCIPincludeBranchruleGeneralDisjunction(SCIP* scip) {
+   SCIP_CALL(SCIPincludeObjBranchrule(scip, new BranchruleGeneralDisjunction(scip), TRUE));
+   return SCIP_OKAY;
+}
+#ifdef __cplusplus
+}
+#endif
+
 //
 //
 ///** branching execution method for external candidates */
@@ -846,20 +783,20 @@ SCIP_DECL_BRANCHEXECLP(branchExeclpgd)
  * branching rule specific interface methods
  */
 
-/** creates the general disjunction branching rule and includes it in SCIP */
-SCIP_RETCODE SCIPincludeBranchruleGeneralDisjunction(
-        SCIP *scip                /**< SCIP data structure */
-){
-   SCIP_BRANCHRULE *branchrule;
-   /* create general branching rule data */
-   branchrule = nullptr;
-   /* include branching rule */
-   SCIP_CALL(SCIPincludeBranchruleBasic(scip, &branchrule, scip_name_, scip_desc_, scip_priority_,
-                                        scip_maxdepth_, scip_maxbounddist_, nullptr));
-   assert(branchrule != nullptr);
-   /* set non fundamental callbacks via setter functions */
-   SCIP_CALL(SCIPsetBranchruleCopy(scip, branchrule, branchCopyGeneraldisjunction));
-   SCIP_CALL(SCIPsetBranchruleExecLp(scip, branchrule, branchExeclpgd));
+
+//SCIP_RETCODE SCIPincludeBranchruleGeneralDisjunction(
+//        SCIP *scip                /**< SCIP data structure */
+//){
+//   SCIP_BRANCHRULE *branchrule;
+//   /* create general branching rule data */
+//   branchrule = nullptr;
+//   /* include branching rule */
+//   SCIP_CALL(SCIPincludeBranchruleBasic(scip, &branchrule, scip_name_, scip_desc_, scip_priority_,
+//                                        scip_maxdepth_, scip_maxbounddist_, nullptr));
+//   assert(branchrule != nullptr);
+//   /* set non fundamental callbacks via setter functions */
+//   SCIP_CALL(SCIPsetBranchruleCopy(scip, branchrule, branchCopyGeneraldisjunction));
+//   SCIP_CALL(SCIPsetBranchruleExecLp(scip, branchrule, branchExeclpgd));
 //    SCIP_CALL(SCIPsetBranchruleFree(scip, branchrule, branchFreeXyz));
 //    SCIP_CALL(SCIPsetBranchruleInit(scip, branchrule, branchInitXyz));
 //    SCIP_CALL(SCIPsetBranchruleExit(scip, branchrule, branchExitXyz));
