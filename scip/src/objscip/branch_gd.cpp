@@ -367,7 +367,20 @@ SubmodelVars submodel_create(
       SCIPfree(&model_sub);
       return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
    }
+   retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/bin/scip_normal.set");
+   if (retcode != SCIP_OKAY) {
+      SCIPprintError(retcode);
+      SCIPfree(&model_sub);
+      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
+   }
+//   retcode = SCIPsetIntParam(model_sub, "branching/gd/priority", 1000);
+//   if (retcode != SCIP_OKAY) {
+//      SCIPprintError(retcode);
+//      SCIPfree(&model_sub);
+//      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
+//   }
 
+//   SCIPsetMessagehdlrQuiet(model_sub, TRUE);
    return SubmodelVars{model_sub, p, s_L, q, s_R, pi_plus, pi_minus, pi0};
 }
 
@@ -379,10 +392,8 @@ SCIP* ckmodel_create(
         vector<SCIP_Real> c,
         int m,
         int n,
-        vector<int> pi_solution,
-        int pi0_solution,
-        SCIP_Real delta,
-        SCIP_Real zl,
+        vector<SCIP_Real> pi_solution,
+        SCIP_Real pi0_solution,
         const string& condition
 ) {
    SCIP* model_ck;
@@ -460,7 +471,9 @@ pair<string, SCIP_Real> check_feasibility(
    std::string status;
    SCIP_Real est;
    if (SCIPgetStatus(model) == SCIP_STATUS_OPTIMAL) {
-      if (SCIPgetPrimalbound(model) - Best_zl > 1e-6) {
+      SCIP_Sol *sol = SCIPgetBestSol(model);
+      SCIP_Real sol_val = SCIPgetSolOrigObj(model, sol);
+      if (sol_val - Best_zl > 1e-6) {
          status = "updated_zl";
          //Retrieve the objective value of the solution.
          est = SCIPgetPrimalbound(model); //TODO: Specific the estimate value here
@@ -469,7 +482,8 @@ pair<string, SCIP_Real> check_feasibility(
          est = 1e+20;
          return {status, est};
       }
-   } else {
+   }
+   else {
       status = "infeasible";
       est = 1e+20;
       return {status, est};
@@ -507,20 +521,24 @@ vector<Submodel_sols> submodel_solve(
       }
       if (SCIPgetStatus(submodel_datas.model_sub) == SCIP_STATUS_OPTIMAL) {
          // Retrieve the solutions
-         vector<int> pi_solution(n); // pi_solution = pi_plus - pi_minus
-         int pi0_solution = SCIPgetSolVal(submodel_datas.model_sub, nullptr, submodel_datas.pi0); // pi0
+         SCIP_Sol *submodel_sol = SCIPgetBestSol(submodel_datas.model_sub); // pi0_solution
+         vector<SCIP_Real> pi_plus_solution(n);
+         vector<SCIP_Real> pi_minus_solution(n);
+         vector<SCIP_Real> pi_solution(n);
+         SCIP_Real pi0_solution = SCIPgetSolVal(submodel_datas.model_sub, submodel_sol, submodel_datas.pi0);
 
          for (int i = 0; i < n; ++i) {
-            pi_solution[i] = SCIPgetSolVal(submodel_datas.model_sub, nullptr, submodel_datas.pi_plus[i])
-                    - SCIPgetSolVal(submodel_datas.model_sub, nullptr, submodel_datas.pi_minus[i]);
+            pi_plus_solution[i] = SCIPgetSolVal(submodel_datas.model_sub, submodel_sol, submodel_datas.pi_plus[i]);
+            pi_minus_solution[i] = SCIPgetSolVal(submodel_datas.model_sub, submodel_sol, submodel_datas.pi_minus[i]);
+            pi_solution[i] = pi_plus_solution[i] - pi_minus_solution[i];
          }
          assert(SCIPisFeasIntegral(model_sub, pi0_solution));
-         for (int i : pi_solution) {
+         for (SCIP_Real i : pi_solution) {
             assert(SCIPisFeasIntegral(model_sub, i));
          }
          // Check if the solution is feasible for the general disjunction
-         SCIP* model_ck_l = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, delta, zl, "pi0");
-         SCIP* model_ck_r = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, delta, zl, "pi0+1");
+         SCIP* model_ck_l = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
+         SCIP* model_ck_r = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
 
          pair<string, SCIP_Real> result_l = check_feasibility(model_ck_l, zl);
          pair<string, SCIP_Real> result_r = check_feasibility(model_ck_r, zl);
@@ -532,15 +550,31 @@ vector<Submodel_sols> submodel_solve(
             Status_l.push_back(result_l.first);
             Status_r.push_back(result_r.first);
             zl_low = zl;
+            if (result_l.first == "updated_zl" && result_r.first != "updated_zl") {
+               estL_list.push_back(result_l.second);
+               estR_list.push_back(1e+20);
+            }
+            else if (result_l.first != "updated_zl" && result_r.first == "updated_zl") {
+               estL_list.push_back(1e+20);
+               estR_list.push_back(result_r.second);
+            }
+            else {
+               estL_list.push_back(result_l.second);
+               estR_list.push_back(result_r.second);
+            }
 
-            estL_list.push_back(result_l.first == "updated_zl" ? result_l.second : 1e+20);
-            estR_list.push_back(result_r.first == "updated_zl" ? result_r.second : 1e+20);
-         } else {
+         }
+         else if (result_l.first == "infeasible" && result_r.first == "infeasible") {
             feasible_zl.push_back(zl);
             best_pi_solutions.push_back(pi_solution);
             best_pi0_solutions.push_back(pi0_solution);
             Status_l.push_back(result_l.first);
             Status_r.push_back(result_r.first);
+            estL_list.push_back(result_l.second);
+            estR_list.push_back(result_r.second);
+            zl_high = zl;
+         }
+         else{
             zl_high = zl;
          }
       }
@@ -554,17 +588,17 @@ vector<Submodel_sols> submodel_solve(
    Submodel_sols result;
 
    if (feasible_zl.empty()){
-      result = {SCIP_INVALID, {}, static_cast<int>(SCIP_INVALID), NULL, NULL, "NULL", "NULL"};
-   } else {
-      SCIP_Real best_zl = *max_element(feasible_zl.begin(), feasible_zl.end());
-      auto idx_zl = distance(feasible_zl.begin(), find(feasible_zl.begin(), feasible_zl.end(), best_zl));
-      vector<int> best_pi_solution = best_pi_solutions[idx_zl];
-      int best_pi0_solution = best_pi0_solutions[idx_zl];
+      result = {SCIP_INVALID, {}, {}, NULL, NULL, "NULL", "NULL"};
+   }
+   else {
+      SCIP_Real best_zl = *std::max_element(feasible_zl.begin(), feasible_zl.end());
+      auto idx_zl = std::distance(feasible_zl.begin(), std::find(feasible_zl.begin(), feasible_zl.end(), best_zl));
+      vector<SCIP_Real> best_pi_solution = best_pi_solutions[idx_zl];
+      SCIP_Real best_pi0_solution = best_pi0_solutions[idx_zl];
       string status_l = Status_l[idx_zl];
       string status_r = Status_r[idx_zl];
       SCIP_Real est_l = estL_list[idx_zl];
       SCIP_Real est_r = estR_list[idx_zl];
-
       result = {best_zl, best_pi_solution, best_pi0_solution, est_l, est_r, status_l, status_r};
    }
    final_results.push_back(result);
@@ -574,7 +608,7 @@ vector<Submodel_sols> submodel_solve(
 static
 SCIP_NODE* get_information(SCIP* scip) {
    std::cout << "_____________________________________" << std::endl;
-   std::cout << "Now starting branching" << std::endl;
+   std::cout << "Now starting branching with general disjunction`" << std::endl;
 
    SCIP_NODE* curr_Node = SCIPgetCurrentNode(scip);
    std::cout << "Current branching Node number: " << SCIPnodeGetNumber(curr_Node) << std::endl;
@@ -611,8 +645,8 @@ SCIP_RETCODE createBranchingConstraint(
         SCIP_Bool createChild,
         SCIP_NODE* curr_Node,
         const vector<SCIP_VAR*>& vars_lp,
-        const vector<int>& pi_solution,
-        int pi0_solution,
+        const vector<SCIP_Real>& pi_solution,
+        SCIP_Real pi0_solution,
         SCIP_Real est,
         const string& side
          )
@@ -662,17 +696,6 @@ SCIP_RETCODE createBranchingConstraint(
  * Callback methods of branching rule
  */
 
-class BranchruleGeneralDisjunction : public scip::ObjBranchrule {
-public:
-    explicit BranchruleGeneralDisjunction(SCIP* scip)
-            : ObjBranchrule(scip, scip_name_, scip_desc_, scip_priority_, scip_maxdepth_, scip_maxbounddist_) {}
-    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp);
-
-};
-//SCIP_DECL_BRANCHCOPY(branchcopygeneraldisjunction) {
-//   SCIP_CALL(SCIPincludeObjBranchrule(scip, new BranchruleGeneralDisjunction(scip), TRUE));
-//   return SCIP_OKAY;
-//}
 /** branching execution method for fractional LP solutions */
 SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
    {  /*lint --e{715}*/
@@ -682,9 +705,9 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       std::vector<SCIP_Real> c = LP_data.c;
       SCIP_Node *curr_Node = get_information(scip);
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
-      std::vector<SCIP_VAR*> vars_lp(A.size());
-      for (size_t i = 0; i < A.size(); ++i) {
-         vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
+      std::vector<SCIP_VAR*> vars_lp(A[0].size());
+      for (size_t i = 0; i < A[0].size(); ++i) {
+          vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
       }
       size_t m = A.size();
       size_t n = A[0].size();
@@ -693,7 +716,14 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP_Real zl = SCIPgetLPObjval(scip);
       SCIP_Real delta = 0.05;
       SCIP_Real zl_low = zl;
-      SCIP_Real zl_high = SCIPinfinity(scip);
+      SCIP_Real zl_high;
+      if (zl > 0) {
+         zl_high = zl * 2;
+      } else if (zl < 0) {
+         zl_high = zl / 2;
+      } else {
+         zl_high = 2;
+      }
 
       SubmodelVars submodel_datas = submodel_create(scip, A, b, c, M, k, delta, zl);
       std::vector<Submodel_sols> final_results = submodel_solve(submodel_datas, zl_low, zl_high, m, n, delta, A, b, c);
@@ -702,13 +732,16 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       string status_l = final_results[0].status_l;
       string status_r = final_results[0].status_r;
       [[maybe_unused]] SCIP_Real downprio = 1.0;
+
       if ( status_l == "NULL" || status_r == "NULL") {
-         *result = SCIP_DIDNOTRUN;
+         std::cout << "No feasible solution found, use other branching rule" << std::endl;
+         *result = SCIP_DIDNOTFIND;
          return SCIP_OKAY;
       } else if (status_l == "updated_zl" and status_r == "updated_zl") {
          SCIP_Bool CreateChild = TRUE;
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
+         std::cout << "Both children are added" << std::endl;
          *result = SCIP_BRANCHED;
          return SCIP_OKAY;
       }else if (status_l == "infeasible" && status_r != "updated_zl") {
@@ -723,13 +756,13 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          SCIP_Bool CreateChild = FALSE;
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
          std::cout << "Only Left constraint added:" << std::endl;
-         *result = SCIP_BRANCHED;
+         *result = SCIP_CONSADDED;
          return SCIP_OKAY;
       } else if (status_r == "updated_zl" && status_l != "updated_zl") {
          SCIP_Bool CreateChild = FALSE;
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
          std::cout << "Only Right constraint added:" << std::endl;
-         *result = SCIP_BRANCHED;
+         *result = SCIP_CONSADDED;
          return SCIP_OKAY;
       } else {
          std::cout << "Both children are not added" << std::endl;
@@ -741,7 +774,8 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
 
 /** creates the general disjunction branching rule and includes it in SCIP */
 extern "C" SCIP_RETCODE SCIPincludeBranchruleGeneralDisjunction(SCIP* scip) {
-   SCIP_CALL(SCIPincludeObjBranchrule(scip, new BranchruleGeneralDisjunction(scip), TRUE));
+   BranchruleGeneralDisjunction* mybranchrule = new BranchruleGeneralDisjunction(scip);
+   SCIP_CALL(SCIPincludeObjBranchrule(scip,  mybranchrule, TRUE));
    return SCIP_OKAY;
 }
 #ifdef __cplusplus

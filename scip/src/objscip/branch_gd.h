@@ -59,8 +59,8 @@ typedef struct {
 
 typedef struct {
    SCIP_Real zl;
-   vector<int> pi_solution;
-   int pi0_solution;
+   vector<SCIP_Real> pi_solution;
+   SCIP_Real pi0_solution;
    SCIP_Real est_l;
    SCIP_Real est_r;
    string status_l;
