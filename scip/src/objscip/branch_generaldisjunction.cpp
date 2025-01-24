@@ -37,16 +37,16 @@
 #include <algorithm>
 #include "scip/scip_var.h"
 #include "scip/scip_branch.h"
-#include "branch_gd.h"
+#include "branch_generaldisjunction.h"
 #include "objbranchrule.h"
 #include "scip/scipdefplugins.h"
 #include "scip/struct_lp.h"
 #include "scip/scip.h"
 
 
-#define scip_name_            "gd"
+#define scip_name_            "general_disjunction"
 #define scip_desc_           "branching rule with general disjunctions"
-#define scip_priority_        1000000
+#define scip_priority_        10
 #define scip_maxdepth_        -1
 #define scip_maxbounddist_    1.0
 
@@ -59,9 +59,13 @@ extern "C" {
  * Data structures
  */
 /** branching rule data */
-//struct SCIP_BranchruleData {
-//};
-/*
+class BranchruleGeneralDisjunction : public scip::ObjBranchrule {
+public:
+    explicit BranchruleGeneralDisjunction(SCIP* scip)
+            : ObjBranchrule(scip, scip_name_, scip_desc_, scip_priority_, scip_maxdepth_, scip_maxbounddist_) {}
+    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp);
+
+};/*
  * Local methods
  */
 /* get the LP constraint matrix A, vector b and objective vector c*/
@@ -89,27 +93,26 @@ MatrixData getConstraintMatrix(SCIP* scip)
    for (int i = 0; i < nrows; ++i)
    {
       SCIP_ROW* row = rows[i];
-      SCIP_Real* rowvals = SCIProwGetVals(row);
-      SCIP_COL** rowcols = SCIProwGetCols(row);
-      int nnonz = SCIProwGetNNonz(row);
-
-      for (int j = 0; j < nnonz; ++j)
+      SCIP_COL** rowcols = SCIProwGetCols(row); // nonzeros columns of the row
+      SCIP_Real* rowvals = SCIProwGetVals(row); // nonzeros values of the row
+      int num_nonz = SCIProwGetNNonz(row); // number of nonzeros entrises(cols) in the row
+      assert(sizeof(rowvals) == sizeof(rowcols));
+      for (int j = 0; j < num_nonz; ++j)
       {
          int colindex = SCIPcolGetLPPos(rowcols[j]);
          LP_data.A[i][colindex] = rowvals[j];
       }
-
       SCIP_Real lhs = SCIProwGetLhs(row);
       SCIP_Real rhs = SCIProwGetRhs(row);
       if (lhs == rhs)
       {
          LP_data.b[i] = lhs;
-         LP_data.A.emplace_back(ncols);
+         LP_data.b.push_back(-lhs);
+         LP_data.A.emplace_back(ncols, 0);
          for (int j = 0; j < ncols; ++j)
          {
             LP_data.A.back()[j] = -LP_data.A[i][j];
          }
-         LP_data.b.push_back(-lhs);
       }
       else if (lhs == -SCIPinfinity(scip))
       {
@@ -133,14 +136,16 @@ MatrixData getConstraintMatrix(SCIP* scip)
       if (lb > -SCIPinfinity(scip))
       {
          std::vector<SCIP_Real> row(ncols, 0.0);
-         row[i] = 1.0;
+         int idx_row = SCIPcolGetLPPos(cols[i]);
+         row[idx_row] = 1.0;
          LP_data.A.push_back(row);
          LP_data.b.push_back(lb);
       }
       if (ub < SCIPinfinity(scip))
       {
          std::vector<SCIP_Real> row(ncols, 0.0);
-         row[i] = -1.0;
+         int idx_row = SCIPcolGetLPPos(cols[i]);
+         row[idx_row] = -1.0;
          LP_data.A.push_back(row);
          LP_data.b.push_back(-ub);
       }
@@ -373,14 +378,14 @@ SubmodelVars submodel_create(
       SCIPfree(&model_sub);
       return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
    }
-//   retcode = SCIPsetIntParam(model_sub, "branching/gd/priority", 1000);
-//   if (retcode != SCIP_OKAY) {
-//      SCIPprintError(retcode);
-//      SCIPfree(&model_sub);
-//      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
-//   }
+   retcode = SCIPsetIntParam(model_sub, "branching/gd/priority", 1000);
+   if (retcode != SCIP_OKAY) {
+      SCIPprintError(retcode);
+      SCIPfree(&model_sub);
+      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
+   }
 
-//   SCIPsetMessagehdlrQuiet(model_sub, TRUE);
+   SCIPsetMessagehdlrQuiet(model_sub, TRUE);
    return SubmodelVars{model_sub, p, s_L, q, s_R, pi_plus, pi_minus, pi0};
 }
 
@@ -420,15 +425,17 @@ SCIP* ckmodel_create(
    }
 
    for (int i = 0; i < n; ++i) {
-      SCIP_VAR* var;
-      SCIPcreateVarBasic(model_ck, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_ck), SCIPinfinity(model_ck), 0.0, SCIP_VARTYPE_CONTINUOUS);
+      SCIP_VAR * var;
+      SCIPcreateVarBasic(model_ck, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_ck), SCIPinfinity(model_ck),
+                         c[i], SCIP_VARTYPE_CONTINUOUS);
       SCIPaddVar(model_ck, var);
       x[i] = var;
    }
 
    for (int j = 0; j < m; ++j) {
-      SCIP_CONS* cons;
-      SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j], SCIPinfinity(model_ck));
+      SCIP_CONS * cons;
+      SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j],
+                                SCIPinfinity(model_ck));
       for (int i = 0; i < n; ++i) {
          SCIPaddCoefLinear(model_ck, cons, x[i], A[j][i]);
       }
@@ -455,10 +462,10 @@ SCIP* ckmodel_create(
    }
    //set objective function
    SCIPsetObjsense(model_ck, SCIP_OBJSENSE_MINIMIZE);
-   for (int i = 0; i < n; ++i) {
-      SCIPaddVarObj(model_ck, x[i], c[i]);
-   }
 
+   SCIPsetIntParam(model_ck, "branching/gd/priority", 100);
+   SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/bin/scip_normal.set");
+   SCIPsetMessagehdlrQuiet(model_ck, TRUE);
    return model_ck;
 
 };
@@ -470,9 +477,10 @@ pair<string, SCIP_Real> check_feasibility(
         {
    std::string status;
    SCIP_Real est;
+   SCIPsolve(model);
    if (SCIPgetStatus(model) == SCIP_STATUS_OPTIMAL) {
       SCIP_Sol *sol = SCIPgetBestSol(model);
-      SCIP_Real sol_val = SCIPgetSolOrigObj(model, sol);
+      SCIP_Real sol_val = SCIPgetSolTransObj(model, sol);
       if (sol_val - Best_zl > 1e-6) {
          status = "updated_zl";
          //Retrieve the objective value of the solution.
@@ -493,7 +501,7 @@ pair<string, SCIP_Real> check_feasibility(
 
 static
 vector<Submodel_sols> submodel_solve(
-         SubmodelVars submodel_datas,
+         SCIP* scip,
          SCIP_Real zl_low,
          SCIP_Real zl_high,
          int m,
@@ -501,23 +509,27 @@ vector<Submodel_sols> submodel_solve(
          SCIP_Real delta,
          vector<vector<SCIP_Real>> A,
          vector<SCIP_Real> b,
-         vector<SCIP_Real> c
+         vector<SCIP_Real> c,
+         int M,
+         int k
         ){
-   SCIP* model_sub = submodel_datas.model_sub;
+
    vector<SCIP_Real> estL_list;
    vector<SCIP_Real> estR_list;
    vector<SCIP_Real> feasible_zl;
-   vector<vector<int>> best_pi_solutions;
-   vector<int> best_pi0_solutions;
+   vector<vector<SCIP_Real>> best_pi_solutions;
+   vector<SCIP_Real> best_pi0_solutions;
    vector<string> Status_l;
    vector<string> Status_r;
    vector<Submodel_sols> final_results;
 
    while (abs(zl_high - zl_low) > 1e-6){
       SCIP_Real zl = (zl_high + zl_low) / 2;
+      SubmodelVars submodel_datas = submodel_create(scip, A, b, c, M, k, delta, zl);
       SCIP_RETCODE retcode = SCIPsolve(submodel_datas.model_sub);
       if (retcode != SCIP_OKAY) {
-         SCIPprintError(retcode);
+      std::cerr << "Error solving submodel: " << std::endl;
+      return final_results;
       }
       if (SCIPgetStatus(submodel_datas.model_sub) == SCIP_STATUS_OPTIMAL) {
          // Retrieve the solutions
@@ -532,9 +544,9 @@ vector<Submodel_sols> submodel_solve(
             pi_minus_solution[i] = SCIPgetSolVal(submodel_datas.model_sub, submodel_sol, submodel_datas.pi_minus[i]);
             pi_solution[i] = pi_plus_solution[i] - pi_minus_solution[i];
          }
-         assert(SCIPisFeasIntegral(model_sub, pi0_solution));
+         assert(SCIPisFeasIntegral(submodel_datas.model_sub, pi0_solution));
          for (SCIP_Real i : pi_solution) {
-            assert(SCIPisFeasIntegral(model_sub, i));
+            assert(SCIPisFeasIntegral(submodel_datas.model_sub, i));
          }
          // Check if the solution is feasible for the general disjunction
          SCIP* model_ck_l = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
@@ -691,6 +703,41 @@ SCIP_RETCODE createBranchingConstraint(
    }
    return SCIP_OKAY;
 };
+static
+SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real>& b, const vector<SCIP_Real>& c) {
+   SCIP* model_test = nullptr;
+   SCIP_CALL_ABORT(SCIPcreate(&model_test));
+   SCIP_CALL_ABORT(SCIPincludeDefaultPlugins(model_test));
+   SCIP_CALL_ABORT(SCIPcreateProbBasic(model_test, "test_model"));
+   SCIP_CALL_ABORT(SCIPreadParams(model_test, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/bin/scip_set.set"));
+   int n = c.size();
+   int m = b.size();
+   vector<SCIP_VAR*> vars(n);
+
+   // Create variables
+   for (int i = 0; i < n; ++i) {
+      SCIP_VAR* var;
+      SCIP_CALL_ABORT(SCIPcreateVarBasic(model_test, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_test), SCIPinfinity(model_test), c[i], SCIP_VARTYPE_CONTINUOUS));
+      SCIP_CALL_ABORT(SCIPaddVar(model_test, var));
+      vars[i] = var;
+   }
+
+   // Add constraints Ax >= b
+   for (int i = 0; i < m; ++i) {
+      SCIP_CONS* cons;
+      SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_test, &cons, ("cons_" + to_string(i)).c_str(), 0, nullptr, nullptr, b[i], SCIPinfinity(model_test)));
+      for (int j = 0; j < n; ++j) {
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_test, cons, vars[j], A[i][j]));
+      }
+      SCIP_CALL_ABORT(SCIPaddCons(model_test, cons));
+      SCIP_CALL_ABORT(SCIPreleaseCons(model_test, &cons));
+   }
+
+   // Set objective function
+   SCIP_CALL_ABORT(SCIPsetObjsense(model_test, SCIP_OBJSENSE_MINIMIZE));
+
+   return model_test;
+}
 
 /*
  * Callback methods of branching rule
@@ -703,9 +750,26 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       std::vector<std::vector<SCIP_Real>> A = LP_data.A;
       std::vector<SCIP_Real> b = LP_data.b;
       std::vector<SCIP_Real> c = LP_data.c;
+      //assert Ax >= b
+      SCIP* test_model = createTestModel(A, b, c);
+      SCIP_CALL_ABORT(SCIPsolve(test_model));
+      SCIP_SOL* sol_t = SCIPgetBestSol(test_model);
+      if (sol_t != nullptr) {
+         SCIP_Real sum = 0.0;
+         for (int i = 0; i < c.size(); ++i) {
+            SCIP_VAR * var = SCIPgetVars(test_model)[i];
+
+            sum += c[i] * SCIPgetSolVal(test_model, sol_t, var);
+         }
+         cout << "The Best sol val is :" << sum << endl;
+//         cout << "The Best sol val is :" << SCIPgetSolTransObj(test_model, sol_t) << endl;
+      }
+      SCIP_Real LP_objval = SCIPgetLPObjval(scip);
+      cout << "The LP obj val is :" << LP_objval << endl;
       SCIP_Node *curr_Node = get_information(scip);
+
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
-      std::vector<SCIP_VAR*> vars_lp(A[0].size());
+      vector<SCIP_VAR*> vars_lp(A[0].size());
       for (size_t i = 0; i < A[0].size(); ++i) {
           vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
       }
@@ -713,20 +777,18 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       size_t n = A[0].size();
       int M = 1;
       int k = 2;
-      SCIP_Real zl = SCIPgetLPObjval(scip);
+      SCIP_Real zl_init = SCIPgetLPObjval(scip);
       SCIP_Real delta = 0.05;
-      SCIP_Real zl_low = zl;
+      SCIP_Real zl_low = zl_init;
       SCIP_Real zl_high;
-      if (zl > 0) {
-         zl_high = zl * 2;
-      } else if (zl < 0) {
-         zl_high = zl / 2;
+      if (zl_init > 0) {
+         zl_high = zl_init * 2;
+      } else if (zl_init < 0) {
+         zl_high = zl_init / 2;
       } else {
          zl_high = 2;
       }
-
-      SubmodelVars submodel_datas = submodel_create(scip, A, b, c, M, k, delta, zl);
-      std::vector<Submodel_sols> final_results = submodel_solve(submodel_datas, zl_low, zl_high, m, n, delta, A, b, c);
+      std::vector<Submodel_sols> final_results = submodel_solve(scip, zl_low, zl_high, m, n, delta, A, b, c, M, k);
       SCIP_Real est_l = final_results[0].est_l;
       SCIP_Real est_r = final_results[0].est_r;
       string status_l = final_results[0].status_l;
@@ -734,38 +796,44 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       [[maybe_unused]] SCIP_Real downprio = 1.0;
 
       if ( status_l == "NULL" || status_r == "NULL") {
-         std::cout << "No feasible solution found, use other branching rule" << std::endl;
+         std::cout << "General disjunction: No feasible solution found, use other branching rule" << std::endl;
          *result = SCIP_DIDNOTFIND;
          return SCIP_OKAY;
+
       } else if (status_l == "updated_zl" and status_r == "updated_zl") {
          SCIP_Bool CreateChild = TRUE;
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
-         std::cout << "Both children are added" << std::endl;
+         std::cout << "General disjunction: Both children are added" << std::endl;
          *result = SCIP_BRANCHED;
          return SCIP_OKAY;
+
       }else if (status_l == "infeasible" && status_r != "updated_zl") {
-         std::cout << "Infeasible left child" << std::endl;
+         std::cout << "General disjunction: Infeasible left child" << std::endl;
          *result = SCIP_CUTOFF;
          return SCIP_OKAY;
+
       } else if (status_l != "updated_zl" && status_r == "infeasible") {
-         std::cout << "Infeasible right child" << std::endl;
+         std::cout << "General disjunction: Infeasible right child" << std::endl;
          *result = SCIP_CUTOFF;
          return SCIP_OKAY;
+
       } else if (status_l == "updated_zl" && status_r != "updated_zl") {
          SCIP_Bool CreateChild = FALSE;
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
-         std::cout << "Only Left constraint added:" << std::endl;
+         std::cout << "General disjunction: Only Left constraint added:" << std::endl;
          *result = SCIP_CONSADDED;
          return SCIP_OKAY;
+
       } else if (status_r == "updated_zl" && status_l != "updated_zl") {
          SCIP_Bool CreateChild = FALSE;
          SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution + 1, est_r, "right"));
-         std::cout << "Only Right constraint added:" << std::endl;
+         std::cout << "General disjunction: Only Right constraint added:" << std::endl;
          *result = SCIP_CONSADDED;
          return SCIP_OKAY;
+
       } else {
-         std::cout << "Both children are not added" << std::endl;
+         std::cout << "General disjunction: Both children are not added" << std::endl;
          *result = SCIP_DIDNOTFIND;
          return SCIP_OKAY;
       };
@@ -838,6 +906,5 @@ extern "C" SCIP_RETCODE SCIPincludeBranchruleGeneralDisjunction(SCIP* scip) {
 //    SCIP_CALL(SCIPsetBranchruleExitsol(scip, branchrule, branchExitsolXyz));
 //    SCIP_CALL(SCIPsetBranchruleExecExt(scip, branchrule, branchExecextXyz));
 //    SCIP_CALL(SCIPsetBranchruleExecPs(scip, branchrule, branchExecpsXyz));
-   return SCIP_OKAY;
-}
-
+//   return SCIP_OKAY;
+//}
