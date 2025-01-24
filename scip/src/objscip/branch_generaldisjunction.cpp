@@ -372,13 +372,7 @@ SubmodelVars submodel_create(
       SCIPfree(&model_sub);
       return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
    }
-   retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/bin/scip_normal.set");
-   if (retcode != SCIP_OKAY) {
-      SCIPprintError(retcode);
-      SCIPfree(&model_sub);
-      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
-   }
-   retcode = SCIPsetIntParam(model_sub, "branching/gd/priority", 1000);
+   retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
       SCIPfree(&model_sub);
@@ -462,9 +456,7 @@ SCIP* ckmodel_create(
    }
    //set objective function
    SCIPsetObjsense(model_ck, SCIP_OBJSENSE_MINIMIZE);
-
-   SCIPsetIntParam(model_ck, "branching/gd/priority", 100);
-   SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/bin/scip_normal.set");
+   SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
    SCIPsetMessagehdlrQuiet(model_ck, TRUE);
    return model_ck;
 
@@ -529,6 +521,8 @@ vector<Submodel_sols> submodel_solve(
       SCIP_RETCODE retcode = SCIPsolve(submodel_datas.model_sub);
       if (retcode != SCIP_OKAY) {
       std::cerr << "Error solving submodel: " << std::endl;
+      Submodel_sols result = {SCIP_INVALID, {}, {}, NULL, NULL, "NULL", "NULL"};
+      final_results.push_back(result);
       return final_results;
       }
       if (SCIPgetStatus(submodel_datas.model_sub) == SCIP_STATUS_OPTIMAL) {
@@ -709,7 +703,7 @@ SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real
    SCIP_CALL_ABORT(SCIPcreate(&model_test));
    SCIP_CALL_ABORT(SCIPincludeDefaultPlugins(model_test));
    SCIP_CALL_ABORT(SCIPcreateProbBasic(model_test, "test_model"));
-   SCIP_CALL_ABORT(SCIPreadParams(model_test, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/cmake-build-debug/bin/scip_set.set"));
+   SCIP_CALL_ABORT(SCIPreadParams(model_test, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_gendj.set"));
    int n = c.size();
    int m = b.size();
    vector<SCIP_VAR*> vars(n);
