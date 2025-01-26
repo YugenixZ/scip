@@ -343,12 +343,12 @@ SubmodelVars submodel_create(
       // Add constraints pi0 <= sum((pi_plus[i] - pi_minus[i]) * x_star[i]) - epsilon
       {
          SCIP_CONS *cons;
-         SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, "cons_pi0_lower", 0, nullptr, nullptr, -SCIPinfinity(model_sub), -epsilon));
+         SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, "cons_pi0_lower", 0, nullptr, nullptr, epsilon, SCIPinfinity(model_sub)));
          for (int i = 0; i < n; ++i) {
             SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[i], x_star[i]));
             SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[i], -x_star[i]));
          }
-         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi0, 1.0));
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi0, -1.0));
          SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
          SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
       }
@@ -356,7 +356,7 @@ SubmodelVars submodel_create(
       // Add constraints pi0 >= sum((pi_plus[i] - pi_minus[i]) * x_star[i]) + epsilon - 1
       {
          SCIP_CONS *cons;
-         SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, "cons_pi0_upper", 0, nullptr, nullptr, epsilon - 1, SCIPinfinity(model_sub)));
+         SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, "cons_pi0_upper", 0, nullptr, nullptr, -SCIPinfinity(model_sub), 1- epsilon));
          for (int i = 0; i < n; ++i) {
             SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[i], x_star[i]));
             SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[i], -x_star[i]));
@@ -399,6 +399,7 @@ SCIP* ckmodel_create(
    SCIP_RETCODE retcode;
    vector<SCIP_VAR*> x(n);
 
+
    retcode = SCIPcreate(&model_ck);
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
@@ -417,19 +418,17 @@ SCIP* ckmodel_create(
       SCIPprintError(retcode);
       return nullptr;
    }
-
+   SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
    for (int i = 0; i < n; ++i) {
       SCIP_VAR * var;
-      SCIPcreateVarBasic(model_ck, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_ck), SCIPinfinity(model_ck),
-                         c[i], SCIP_VARTYPE_CONTINUOUS);
+      SCIPcreateVarBasic(model_ck, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_ck), SCIPinfinity(model_ck), c[i], SCIP_VARTYPE_CONTINUOUS);
       SCIPaddVar(model_ck, var);
       x[i] = var;
    }
 
    for (int j = 0; j < m; ++j) {
       SCIP_CONS * cons;
-      SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j],
-                                SCIPinfinity(model_ck));
+      SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j],SCIPinfinity(model_ck));
       for (int i = 0; i < n; ++i) {
          SCIPaddCoefLinear(model_ck, cons, x[i], A[j][i]);
       }
@@ -445,7 +444,8 @@ SCIP* ckmodel_create(
       }
       SCIPaddCons(model_ck, cons);
       SCIPreleaseCons(model_ck, &cons);
-   } else if (condition == "pi0+1") {
+   }
+   else if (condition == "pi0+1") {
       SCIP_CONS* cons;
       SCIPcreateConsBasicLinear(model_ck, &cons, "cons_pi0_plus_1", 0, NULL, NULL, pi0_solution + 1, SCIPinfinity(model_ck));
       for (int i = 0; i < n; ++i) {
@@ -454,9 +454,9 @@ SCIP* ckmodel_create(
       SCIPaddCons(model_ck, cons);
       SCIPreleaseCons(model_ck, &cons);
    }
-   //set objective function
+
    SCIPsetObjsense(model_ck, SCIP_OBJSENSE_MINIMIZE);
-   SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
+
    SCIPsetMessagehdlrQuiet(model_ck, TRUE);
    return model_ck;
 
@@ -465,18 +465,26 @@ SCIP* ckmodel_create(
 static
 pair<string, SCIP_Real> check_feasibility(
         SCIP* model,
-        SCIP_Real Best_zl)
+        SCIP_Real Best_zl,
+        vector<SCIP_Real> c)
         {
    std::string status;
    SCIP_Real est;
-   SCIPsolve(model);
+   SCIP_CALL_ABORT(SCIPsolve(model));
    if (SCIPgetStatus(model) == SCIP_STATUS_OPTIMAL) {
-      SCIP_Sol *sol = SCIPgetBestSol(model);
-      SCIP_Real sol_val = SCIPgetSolTransObj(model, sol);
+      SCIP_SOL* sol = SCIPgetBestSol(model);
+//      SCIP_Real sol_val = 0.0;
+//      if (sol != nullptr) {
+//         for (int i = 0; i < c.size(); ++i) {
+//            SCIP_VAR * var = SCIPgetVars(model)[i];
+//            sol_val += c[i] * SCIPgetSolVal(model, sol, var);
+//         }
+//      }
+      SCIP_Real sol_val = SCIPgetSolOrigObj(model, sol);
       if (sol_val - Best_zl > 1e-6) {
          status = "updated_zl";
          //Retrieve the objective value of the solution.
-         est = SCIPgetPrimalbound(model); //TODO: Specific the estimate value here
+         est = SCIPgetPrimalbound(model);
       } else {
          status = "obj_val less than Best_zl";
          est = 1e+20;
@@ -544,10 +552,10 @@ vector<Submodel_sols> submodel_solve(
          }
          // Check if the solution is feasible for the general disjunction
          SCIP* model_ck_l = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
-         SCIP* model_ck_r = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
+         SCIP* model_ck_r = ckmodel_create("check_model_right", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
 
-         pair<string, SCIP_Real> result_l = check_feasibility(model_ck_l, zl);
-         pair<string, SCIP_Real> result_r = check_feasibility(model_ck_r, zl);
+         pair<string, SCIP_Real> result_l = check_feasibility(model_ck_l, zl, c);
+         pair<string, SCIP_Real> result_r = check_feasibility(model_ck_r, zl, c);
 
          if (result_l.first == "updated_zl" || result_r.first == "updated_zl") {
             feasible_zl.push_back(zl);
@@ -626,11 +634,13 @@ SCIP_NODE* get_information(SCIP* scip) {
          std::cout << "No constraints added" << std::endl;
 
       } else {
-         SCIPnodeGetAddedConss(curr_Node, reinterpret_cast<SCIP_CONS **>(num_addedCons),
-                               reinterpret_cast<int *>(addedconss), num_addedCons);
+         int nconss;
+         SCIPnodeGetAddedConss(curr_Node, addedconss, &nconss ,num_addedCons);
+         assert(nconss == num_addedCons);
+         vector<SCIP_CONS *> addedconss_vec(addedconss, addedconss + num_addedCons);
          std::cout << "Number of added constraints: " << num_addedCons << std::endl;
          for (int i = 0; i < num_addedCons; ++i) {
-            SCIP_ROW* row = SCIPgetRowLinear(scip, addedconss[i]);
+            SCIP_ROW* row = SCIPgetRowLinear(scip, addedconss_vec[i]);
             std::cout << "Added constraint: ";
             SCIP_Real* vals = SCIProwGetVals(row);
             for (int j = 0; j < SCIProwGetNNonz(row); ++j) {
@@ -659,9 +669,7 @@ SCIP_RETCODE createBranchingConstraint(
          {
    if (side == "left") {
       SCIP_CONS *cons_l;
-      SCIP_CALL(
-              SCIPcreateConsBasicLinear(scip, &cons_l, (side + std::to_string(SCIPnodeGetNumber(curr_Node))).c_str(), 0,
-                                        nullptr, nullptr, pi0_solution, SCIPinfinity(scip)));
+      SCIP_CALL(SCIPcreateConsBasicLinear(scip, &cons_l, (side + std::to_string(SCIPnodeGetNumber(curr_Node))).c_str(), 0,nullptr, nullptr, -SCIPinfinity(scip), pi0_solution));
       for (size_t i = 0; i < vars_lp.size(); ++i) {
          SCIP_CALL(SCIPaddCoefLinear(scip, cons_l, vars_lp[i], pi_solution[i]));
       }
@@ -687,7 +695,8 @@ SCIP_RETCODE createBranchingConstraint(
          SCIP_CALL(SCIPcreateChild(scip, &child_node, 1.0, est));
          SCIP_CALL(SCIPaddConsNode(scip, child_node, cons_r, nullptr));
          SCIP_CALL(SCIPreleaseCons(scip, &cons_r));
-         }else{
+         }
+      else{
          SCIP_CALL(SCIPaddConsLocal(scip, cons_r, curr_Node));
          SCIP_CALL(SCIPreleaseCons(scip, &cons_r));
          }
@@ -752,11 +761,9 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          SCIP_Real sum = 0.0;
          for (int i = 0; i < c.size(); ++i) {
             SCIP_VAR * var = SCIPgetVars(test_model)[i];
-
             sum += c[i] * SCIPgetSolVal(test_model, sol_t, var);
          }
          cout << "The Best sol val is :" << sum << endl;
-//         cout << "The Best sol val is :" << SCIPgetSolTransObj(test_model, sol_t) << endl;
       }
       SCIP_Real LP_objval = SCIPgetLPObjval(scip);
       cout << "The LP obj val is :" << LP_objval << endl;
