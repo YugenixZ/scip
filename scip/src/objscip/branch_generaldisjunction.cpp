@@ -384,7 +384,7 @@ SubmodelVars submodel_create(
 }
 
 static
-SCIP* ckmodel_create(
+pair<SCIP_Status, SCIP_Real> ckmodel_create(
         const string& name,
         vector<vector<SCIP_Real>> A,
         vector<SCIP_Real> b,
@@ -403,20 +403,20 @@ SCIP* ckmodel_create(
    retcode = SCIPcreate(&model_ck);
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
-      return nullptr;
+      return {SCIP_STATUS_INFEASIBLE,1e+20};
    }
 
    retcode = SCIPincludeDefaultPlugins(model_ck);
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
       SCIPfree(&model_ck);
-      return nullptr;
+      return {SCIP_STATUS_INFEASIBLE,1e+20};
    }
 
    retcode = SCIPcreateProbBasic(model_ck, name.c_str());
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
-      return nullptr;
+      return {SCIP_STATUS_INFEASIBLE,1e+20};
    }
    SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
    for (int i = 0; i < n; ++i) {
@@ -456,38 +456,44 @@ SCIP* ckmodel_create(
    }
 
    SCIPsetObjsense(model_ck, SCIP_OBJSENSE_MINIMIZE);
-
    SCIPsetMessagehdlrQuiet(model_ck, TRUE);
-   return model_ck;
-
+   SCIPsolve(model_ck);
+   SCIP_Status status = SCIPgetStatus(model_ck);
+   if (status == SCIP_STATUS_OPTIMAL) {
+      SCIP_SOL* sol = SCIPgetBestSol(model_ck);
+      SCIP_Real sol_val = SCIPgetSolOrigObj(model_ck, sol);
+      for (int i = 0; i < n; ++i) {
+         SCIPreleaseVar(model_ck, &x[i]);
+      }
+      SCIPfree(&model_ck);
+      return {status, sol_val};
+   }
+   else {
+      for (int i = 0; i < n; ++i) {
+         SCIPreleaseVar(model_ck, &x[i]);
+      }
+      SCIPfree(&model_ck);
+      return {status, 1e+20};
+   }
 };
 
 static
 pair<string, SCIP_Real> check_feasibility(
-        SCIP* model,
-        SCIP_Real Best_zl,
-        vector<SCIP_Real> c)
+        SCIP_Status sol_status,
+        SCIP_Real sol_val,
+        SCIP_Real Best_zl
+)
         {
-   std::string status;
+   string status;
    SCIP_Real est;
-   SCIP_CALL_ABORT(SCIPsolve(model));
-   if (SCIPgetStatus(model) == SCIP_STATUS_OPTIMAL) {
-      SCIP_SOL* sol = SCIPgetBestSol(model);
-//      SCIP_Real sol_val = 0.0;
-//      if (sol != nullptr) {
-//         for (int i = 0; i < c.size(); ++i) {
-//            SCIP_VAR * var = SCIPgetVars(model)[i];
-//            sol_val += c[i] * SCIPgetSolVal(model, sol, var);
-//         }
-//      }
-      SCIP_Real sol_val = SCIPgetSolOrigObj(model, sol);
+   if (sol_status == SCIP_STATUS_OPTIMAL) {
       if (sol_val - Best_zl > 1e-6) {
          status = "updated_zl";
          //Retrieve the objective value of the solution.
-         est = SCIPgetPrimalbound(model);
+         est = sol_val ;
       } else {
          status = "obj_val less than Best_zl";
-         est = 1e+20;
+         est = sol_val;
          return {status, est};
       }
    }
@@ -553,9 +559,11 @@ vector<Submodel_sols> submodel_solve(
          // Check if the solution is feasible for the general disjunction
          SCIP* model_ck_l = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
          SCIP* model_ck_r = ckmodel_create("check_model_right", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
+         pair<SCIP_Status, SCIP_Real> model_ck_l_info = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
+         pair<SCIP_Status, SCIP_Real> model_ck_r_info = ckmodel_create("check_model_right", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
 
-         pair<string, SCIP_Real> result_l = check_feasibility(model_ck_l, zl, c);
-         pair<string, SCIP_Real> result_r = check_feasibility(model_ck_r, zl, c);
+         pair<string, SCIP_Real> result_l = check_feasibility(model_ck_l_info.first, model_ck_l_info.second, zl);
+         pair<string, SCIP_Real> result_r = check_feasibility(model_ck_r_info.first, model_ck_r_info.second, zl);
 
          if (result_l.first == "updated_zl" || result_r.first == "updated_zl") {
             feasible_zl.push_back(zl);
@@ -567,14 +575,54 @@ vector<Submodel_sols> submodel_solve(
             if (result_l.first == "updated_zl" && result_r.first != "updated_zl") {
                estL_list.push_back(result_l.second);
                estR_list.push_back(1e+20);
+
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
+               for (int i = 0; i < m; ++i) {
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.p[i]);
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.q[i]);
+               }
+               for (int i = 0; i < n; ++i) {
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_minus[i]);
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_plus[i]);
+               }
+               SCIPfree(&submodel_datas.model_sub);
+
             }
             else if (result_l.first != "updated_zl" && result_r.first == "updated_zl") {
                estL_list.push_back(1e+20);
                estR_list.push_back(result_r.second);
+
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
+               for (int i = 0; i < m; ++i) {
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.p[i]);
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.q[i]);
+               }
+               for (int i = 0; i < n; ++i) {
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_minus[i]);
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_plus[i]);
+               }
+               SCIPfree(&submodel_datas.model_sub);
             }
             else {
                estL_list.push_back(result_l.second);
                estR_list.push_back(result_r.second);
+
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
+               for (int i = 0; i < m; ++i) {
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.p[i]);
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.q[i]);
+               }
+               for (int i = 0; i < n; ++i) {
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_minus[i]);
+                  SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_plus[i]);
+               }
+               SCIPfree(&submodel_datas.model_sub);
             }
 
          }
@@ -586,13 +634,51 @@ vector<Submodel_sols> submodel_solve(
             Status_r.push_back(result_r.first);
             estL_list.push_back(result_l.second);
             estR_list.push_back(result_r.second);
+
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
+            for (int i = 0; i < m; ++i) {
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.p[i]);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.q[i]);
+            }
+            for (int i = 0; i < n; ++i) {
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_minus[i]);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_plus[i]);
+            }
+            SCIPfree(&submodel_datas.model_sub);
             zl_high = zl;
          }
          else{
+
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
+            for (int i = 0; i < m; ++i) {
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.p[i]);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.q[i]);
+            }
+            for (int i = 0; i < n; ++i) {
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_minus[i]);
+               SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_plus[i]);
+            }
+            SCIPfree(&submodel_datas.model_sub);
             zl_high = zl;
          }
       }
       else {
+         SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
+         SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
+         SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
+         for (int i = 0; i < m; ++i) {
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.p[i]);
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.q[i]);
+         }
+         for (int i = 0; i < n; ++i) {
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_minus[i]);
+            SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi_plus[i]);
+         }
+         SCIPfree(&submodel_datas.model_sub);
          zl_high = zl;
       }
    }
@@ -680,7 +766,7 @@ SCIP_RETCODE createBranchingConstraint(
          SCIP_CALL(SCIPreleaseCons(scip, &cons_l));
       }
       else {
-         SCIP_CALL(SCIPaddConsLocal(scip, cons_l, curr_Node));
+         SCIP_CALL(SCIPaddConsLocal(scip, cons_l, NULL));
          SCIP_CALL(SCIPreleaseCons(scip, &cons_l));
       }
    }
@@ -697,7 +783,7 @@ SCIP_RETCODE createBranchingConstraint(
          SCIP_CALL(SCIPreleaseCons(scip, &cons_r));
          }
       else{
-         SCIP_CALL(SCIPaddConsLocal(scip, cons_r, curr_Node));
+         SCIP_CALL(SCIPaddConsLocal(scip, cons_r, NULL));
          SCIP_CALL(SCIPreleaseCons(scip, &cons_r));
          }
       }
@@ -753,20 +839,23 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       std::vector<std::vector<SCIP_Real>> A = LP_data.A;
       std::vector<SCIP_Real> b = LP_data.b;
       std::vector<SCIP_Real> c = LP_data.c;
-      //assert Ax >= b
-      SCIP* test_model = createTestModel(A, b, c);
-      SCIP_CALL_ABORT(SCIPsolve(test_model));
-      SCIP_SOL* sol_t = SCIPgetBestSol(test_model);
-      if (sol_t != nullptr) {
-         SCIP_Real sum = 0.0;
-         for (int i = 0; i < c.size(); ++i) {
-            SCIP_VAR * var = SCIPgetVars(test_model)[i];
-            sum += c[i] * SCIPgetSolVal(test_model, sol_t, var);
-         }
-         cout << "The Best sol val is :" << sum << endl;
-      }
-      SCIP_Real LP_objval = SCIPgetLPObjval(scip);
-      cout << "The LP obj val is :" << LP_objval << endl;
+//      //assert Ax >= b
+//      SCIP* test_model = createTestModel(A, b, c);
+//      SCIP_CALL_ABORT(SCIPsolve(test_model));
+//      SCIP_SOL* sol_t = SCIPgetBestSol(test_model);
+//      if (sol_t != nullptr) {
+//         SCIP_Real sum = 0.0;
+//         for (int i = 0; i < c.size(); ++i) {
+//            SCIP_VAR * var = SCIPgetVars(test_model)[i];
+//            sum += c[i] * SCIPgetSolVal(test_model, sol_t, var);
+//         }
+//
+//         cout << "The Best sol val is :" << sum << endl;
+//      }
+//      SCIP_Real LP_objval = SCIPgetLPObjval(scip);
+//      cout << "The LP obj val is :" << LP_objval << endl;
+//      SCIPfree(&test_model);
+
       SCIP_Node *curr_Node = get_information(scip);
 
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
