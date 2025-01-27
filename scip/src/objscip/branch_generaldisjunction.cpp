@@ -35,6 +35,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>
 #include "scip/scip_var.h"
 #include "scip/scip_branch.h"
 #include "branch_generaldisjunction.h"
@@ -520,13 +521,13 @@ vector<Submodel_sols> submodel_solve(
          int k
         ){
 
-   vector<SCIP_Real> estL_list;
-   vector<SCIP_Real> estR_list;
-   vector<SCIP_Real> feasible_zl;
-   vector<vector<SCIP_Real>> best_pi_solutions;
-   vector<SCIP_Real> best_pi0_solutions;
-   vector<string> Status_l;
-   vector<string> Status_r;
+   queue<SCIP_Real> estL_list;
+   queue<SCIP_Real> estR_list;
+   queue<SCIP_Real> feasible_zl;
+   queue<vector<SCIP_Real>> best_pi_solutions;
+   queue<SCIP_Real> best_pi0_solutions;
+   queue<string> Status_l;
+   queue<string> Status_r;
    vector<Submodel_sols> final_results;
 
    while (abs(zl_high - zl_low) > 1e-6){
@@ -557,8 +558,6 @@ vector<Submodel_sols> submodel_solve(
             assert(SCIPisFeasIntegral(submodel_datas.model_sub, i));
          }
          // Check if the solution is feasible for the general disjunction
-         SCIP* model_ck_l = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
-         SCIP* model_ck_r = ckmodel_create("check_model_right", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
          pair<SCIP_Status, SCIP_Real> model_ck_l_info = ckmodel_create("check_model_left", A, b, c, m, n, pi_solution, pi0_solution, "pi0");
          pair<SCIP_Status, SCIP_Real> model_ck_r_info = ckmodel_create("check_model_right", A, b, c, m, n, pi_solution, pi0_solution, "pi0+1");
 
@@ -566,16 +565,26 @@ vector<Submodel_sols> submodel_solve(
          pair<string, SCIP_Real> result_r = check_feasibility(model_ck_r_info.first, model_ck_r_info.second, zl);
 
          if (result_l.first == "updated_zl" || result_r.first == "updated_zl") {
-            feasible_zl.push_back(zl);
-            best_pi_solutions.push_back(pi_solution);
-            best_pi0_solutions.push_back(pi0_solution);
-            Status_l.push_back(result_l.first);
-            Status_r.push_back(result_r.first);
+            feasible_zl.push(zl);
+            best_pi_solutions.push(pi_solution);
+            best_pi0_solutions.push(pi0_solution);
+            Status_l.push(result_l.first);
+            Status_r.push(result_r.first);
             zl_low = zl;
+            if (feasible_zl.size() > 1){
+               feasible_zl.pop();
+               best_pi_solutions.pop();
+               best_pi0_solutions.pop();
+               Status_l.pop();
+               Status_r.pop();
+            }
             if (result_l.first == "updated_zl" && result_r.first != "updated_zl") {
-               estL_list.push_back(result_l.second);
-               estR_list.push_back(1e+20);
-
+               estL_list.push(result_l.second);
+               estR_list.push(1e+20);
+               if (estL_list.size() > 1){
+                  estL_list.pop();
+                  estR_list.pop();
+               }
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
@@ -591,9 +600,12 @@ vector<Submodel_sols> submodel_solve(
 
             }
             else if (result_l.first != "updated_zl" && result_r.first == "updated_zl") {
-               estL_list.push_back(1e+20);
-               estR_list.push_back(result_r.second);
-
+               estL_list.push(1e+20);
+               estR_list.push(result_r.second);
+               if (estL_list.size() > 1){
+                  estL_list.pop();
+                  estR_list.pop();
+               }
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
@@ -608,9 +620,12 @@ vector<Submodel_sols> submodel_solve(
                SCIPfree(&submodel_datas.model_sub);
             }
             else {
-               estL_list.push_back(result_l.second);
-               estR_list.push_back(result_r.second);
-
+               estL_list.push(result_l.second);
+               estR_list.push(result_r.second);
+               if (estL_list.size() > 1){
+                  estL_list.pop();
+                  estR_list.pop();
+               }
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
@@ -627,14 +642,22 @@ vector<Submodel_sols> submodel_solve(
 
          }
          else if (result_l.first == "infeasible" && result_r.first == "infeasible") {
-            feasible_zl.push_back(zl);
-            best_pi_solutions.push_back(pi_solution);
-            best_pi0_solutions.push_back(pi0_solution);
-            Status_l.push_back(result_l.first);
-            Status_r.push_back(result_r.first);
-            estL_list.push_back(result_l.second);
-            estR_list.push_back(result_r.second);
-
+            feasible_zl.push(zl);
+            best_pi_solutions.push(pi_solution);
+            best_pi0_solutions.push(pi0_solution);
+            Status_l.push(result_l.first);
+            Status_r.push(result_r.first);
+            estL_list.push(result_l.second);
+            estR_list.push(result_r.second);
+            if (feasible_zl.size() > 1){
+               feasible_zl.pop();
+               best_pi_solutions.pop();
+               best_pi0_solutions.pop();
+               Status_l.pop();
+               Status_r.pop();
+               estL_list.pop();
+               estR_list.pop();
+            }
             SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
             SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
             SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
@@ -691,14 +714,13 @@ vector<Submodel_sols> submodel_solve(
       result = {SCIP_INVALID, {}, {}, NULL, NULL, "NULL", "NULL"};
    }
    else {
-      SCIP_Real best_zl = *std::max_element(feasible_zl.begin(), feasible_zl.end());
-      auto idx_zl = std::distance(feasible_zl.begin(), std::find(feasible_zl.begin(), feasible_zl.end(), best_zl));
-      vector<SCIP_Real> best_pi_solution = best_pi_solutions[idx_zl];
-      SCIP_Real best_pi0_solution = best_pi0_solutions[idx_zl];
-      string status_l = Status_l[idx_zl];
-      string status_r = Status_r[idx_zl];
-      SCIP_Real est_l = estL_list[idx_zl];
-      SCIP_Real est_r = estR_list[idx_zl];
+      SCIP_Real best_zl = feasible_zl.back();
+      vector<SCIP_Real> best_pi_solution = best_pi_solutions.back();
+      SCIP_Real best_pi0_solution = best_pi0_solutions.back();
+      string status_l = Status_l.back();
+      string status_r = Status_r.back();
+      SCIP_Real est_l = estL_list.back();
+      SCIP_Real est_r = estR_list.back();
       result = {best_zl, best_pi_solution, best_pi0_solution, est_l, est_r, status_l, status_r};
    }
    final_results.push_back(result);
