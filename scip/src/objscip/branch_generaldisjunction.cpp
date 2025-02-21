@@ -367,19 +367,21 @@ SubmodelVars submodel_create(
          SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
       }
    }
-   retcode = SCIPsetRealParam(model_sub, "limits/time", 1000);
-   if (retcode != SCIP_OKAY) {
-      SCIPprintError(retcode);
-      SCIPfree(&model_sub);
-      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
-   }
+
    retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
       SCIPfree(&model_sub);
       return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
    }
+   retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
 
+   retcode = SCIPsetRealParam(model_sub, "limits/time", 1000);
+   if (retcode != SCIP_OKAY) {
+      SCIPprintError(retcode);
+      SCIPfree(&model_sub);
+      return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
+   }
    SCIPsetMessagehdlrQuiet(model_sub, TRUE);
    return SubmodelVars{model_sub, p, s_L, q, s_R, pi_plus, pi_minus, pi0};
 }
@@ -538,6 +540,7 @@ vector<Submodel_sols> submodel_solve(
       std::cerr << "Error solving submodel: " << std::endl;
       Submodel_sols result = {SCIP_INVALID, {}, {}, NULL, NULL, "NULL", "NULL"};
       final_results.push_back(result);
+
       return final_results;
       }
       if (SCIPgetStatus(submodel_datas.model_sub) == SCIP_STATUS_OPTIMAL) {
@@ -619,7 +622,7 @@ vector<Submodel_sols> submodel_solve(
                }
                SCIPfree(&submodel_datas.model_sub);
             }
-            else {
+            else if (result_l.first == "updated_zl" && result_r.first == "updated_zl"){
                estL_list.push(result_l.second);
                estR_list.push(result_r.second);
                if (estL_list.size() > 1){
@@ -849,7 +852,19 @@ SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real
 
    return model_test;
 }
-
+static
+SCIP_Real get_factor(SCIP_Real lp_gap) {
+   SCIP_Real factor;
+   assert (lp_gap >= 0);
+   if (lp_gap < 0.1) {
+      factor = 1.5 + ceil(lp_gap*100)/100;
+   } else if (lp_gap >=0.1 && lp_gap < 1) {
+      factor = 1.5 + ceil(lp_gap*10)/10;
+   } else {
+      factor = ceil(lp_gap) + 2;
+   }
+   return factor;
+}
 /*
  * Callback methods of branching rule
  */
@@ -879,7 +894,7 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
 //      SCIPfree(&test_model);
 
       SCIP_Node *curr_Node = get_information(scip);
-
+      SCIP_Real lp_gap = SCIPgetGap(scip);
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
       vector<SCIP_VAR*> vars_lp(A[0].size());
       for (size_t i = 0; i < A[0].size(); ++i) {
@@ -893,10 +908,11 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP_Real delta = 0.05;
       SCIP_Real zl_low = zl_init;
       SCIP_Real zl_high;
+      SCIP_Real factor = get_factor(lp_gap);
       if (zl_init > 0) {
-         zl_high = zl_init * 2;
+         zl_high = zl_init * factor;
       } else if (zl_init < 0) {
-         zl_high = zl_init / 2;
+         zl_high = zl_init / factor ;
       } else {
          zl_high = 2;
       }
@@ -908,7 +924,7 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       [[maybe_unused]] SCIP_Real downprio = 1.0;
 
       if ( status_l == "NULL" || status_r == "NULL") {
-         std::cout << "General disjunction: No feasible solution found, use other branching rule" << std::endl;
+         std::cout << "General disjunction: No feasible solution found, use SCIP default branching rule" << std::endl;
          *result = SCIP_DIDNOTFIND;
          return SCIP_OKAY;
 
@@ -921,13 +937,23 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          return SCIP_OKAY;
 
       }else if (status_l == "infeasible" && status_r != "updated_zl") {
-         std::cout << "General disjunction: Infeasible left child" << std::endl;
-         *result = SCIP_CUTOFF;
+         std::cout << "General disjunction: Infeasible disjunction" << std::endl;
+         if (SCIPnodeGetNumber(curr_Node) == 1) {
+            std::cout << "Root node: No feasible solution found, use SCIP default branching rule" << std::endl;
+            *result = SCIP_DIDNOTFIND;
+         }else {
+            *result = SCIP_CUTOFF;
+         }
          return SCIP_OKAY;
 
       } else if (status_l != "updated_zl" && status_r == "infeasible") {
-         std::cout << "General disjunction: Infeasible right child" << std::endl;
-         *result = SCIP_CUTOFF;
+         std::cout << "General disjunction: Infeasible disjunction" << std::endl;
+         if (SCIPnodeGetNumber(curr_Node) == 1) {
+            std::cout << "Root node: No feasible solution found, use SCIP default branching rule" << std::endl;
+            *result = SCIP_DIDNOTFIND;
+         }else {
+            *result = SCIP_CUTOFF;
+         }
          return SCIP_OKAY;
 
       } else if (status_l == "updated_zl" && status_r != "updated_zl") {
