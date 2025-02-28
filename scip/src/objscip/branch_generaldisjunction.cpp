@@ -374,7 +374,6 @@ SubmodelVars submodel_create(
       SCIPfree(&model_sub);
       return SubmodelVars{nullptr, {}, nullptr, {}, nullptr, {}, {}, nullptr};
    }
-   retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
 
    retcode = SCIPsetRealParam(model_sub, "limits/time", 1000);
    if (retcode != SCIP_OKAY) {
