@@ -2150,6 +2150,7 @@ ScipParaSolver::ScipParaSolver(
 #endif
    /* include branch rule plugins */
    SCIP_CALL_ABORT( SCIPincludeObjBranchrule(scip, new ScipParaObjBranchRule(this), TRUE) );
+   SCIP_CALL_ABORT(SCIPincludeBranchruleGeneralDisjunction(scip));
 
    if( inParaParamSet->getBoolParamValue(UG::TransferConflictCuts) )
    {
@@ -2893,6 +2894,7 @@ ScipParaSolver::reinitialize(
    SCIP_CALL_ABORT( SCIPincludeObjNodesel(scip, nodesel, TRUE) );
    /* include branch rule plugins */
    SCIP_CALL_ABORT( SCIPincludeObjBranchrule(scip, new ScipParaObjBranchRule(this), TRUE) );
+   SCIP_CALL_ABORT( SCIPincludeBranchruleGeneralDisjunction(scip));
 
    if( paraParams->getBoolParamValue(UG::TransferConflictCuts) )
    {

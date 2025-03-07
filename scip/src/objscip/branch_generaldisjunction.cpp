@@ -22,7 +22,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/**@file   branch_gd.cpp
+/**@file   branch_generaldisjunction.cpp
  * @ingroup DEFPLUGINS_BRANCH
  * @brief  branching rule with general disjunction
  * @author Yugeng Zhou
@@ -368,7 +368,7 @@ SubmodelVars submodel_create(
       }
    }
 
-   retcode = SCIPreadParams(model_sub, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
+   retcode = SCIPreadParams(model_sub, "def_fscip.set");
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
       SCIPfree(&model_sub);
@@ -420,7 +420,7 @@ pair<SCIP_Status, SCIP_Real> ckmodel_create(
       SCIPprintError(retcode);
       return {SCIP_STATUS_INFEASIBLE,1e+20};
    }
-   SCIPreadParams(model_ck, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_default.set");
+   SCIPreadParams(model_ck, "def_fscip.set");
    for (int i = 0; i < n; ++i) {
       SCIP_VAR * var;
       SCIPcreateVarBasic(model_ck, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_ck), SCIPinfinity(model_ck), c[i], SCIP_VARTYPE_CONTINUOUS);
@@ -822,7 +822,7 @@ SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real
    SCIP_CALL_ABORT(SCIPcreate(&model_test));
    SCIP_CALL_ABORT(SCIPincludeDefaultPlugins(model_test));
    SCIP_CALL_ABORT(SCIPcreateProbBasic(model_test, "test_model"));
-   SCIP_CALL_ABORT(SCIPreadParams(model_test, "D:/scipoptsuite-9.1.0/scipoptsuite-9.1.0/settings/scip_gendj.set"));
+   SCIP_CALL_ABORT(SCIPreadParams(model_test, "def_fscip.set"));
    int n = c.size();
    int m = b.size();
    vector<SCIP_VAR*> vars(n);
@@ -859,6 +859,8 @@ SCIP_Real get_factor(SCIP_Real lp_gap) {
       factor = 1.5 + ceil(lp_gap*100)/100;
    } else if (lp_gap >=0.1 && lp_gap < 1) {
       factor = 1.5 + ceil(lp_gap*10)/10;
+   } else if (lp_gap == 1e+20) {
+      factor = 2;
    } else {
       factor = ceil(lp_gap) + 2;
    }

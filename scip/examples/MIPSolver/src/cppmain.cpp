@@ -30,17 +30,16 @@
 /*--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0----+----1----+----2*/
 
 #include <iostream>
-
 #include "objscip/objscip.h"
 #include "objscip/objscipdefplugins.h"
-
+#include "objscip/branch_generaldisjunction.h"
 
 /** reads parameters */
 static
 SCIP_RETCODE readParams(
-   SCIP*                      scip,               /**< SCIP data structure */
-   const char*                filename            /**< parameter file name, or NULL */
-   )
+        SCIP*                      scip,               /**< SCIP data structure */
+        const char*                filename            /**< parameter file name, or NULL */
+)
 {
    if( filename != NULL )
    {
@@ -64,18 +63,25 @@ SCIP_RETCODE readParams(
 /** starts SCIP */
 static
 SCIP_RETCODE fromCommandLine(
-   SCIP*                      scip,               /**< SCIP data structure */
-   const char*                filename            /**< input file name */
-   )
+        SCIP*                      scip,               /**< SCIP data structure */
+        const char*                probfilename,       /**< input problem file name */
+        const char*                solfilename         /**< input solution file name, or NULL */
+)
 {
    /********************
     * Problem Creation *
     ********************/
 
-   std::cout << std::endl << "read problem <" << filename << ">" << std::endl;
+   std::cout << std::endl << "read problem <" << probfilename << ">" << std::endl;
    std::cout << "============" << std::endl << std::endl;
-   SCIP_CALL( SCIPreadProb(scip, filename, NULL) );
+   SCIP_CALL( SCIPreadProb(scip, probfilename, NULL) );
 
+   if( solfilename != NULL )
+   {
+      std::cout << std::endl << "read solution <" << solfilename << ">" << std::endl;
+      std::cout << "============" << std::endl << std::endl;
+      SCIP_CALL( SCIPreadSol(scip, solfilename) );
+   }
 
    /*******************
     * Problem Solving *
@@ -89,7 +95,6 @@ SCIP_RETCODE fromCommandLine(
    std::cout << std::endl << "primal solution:" << std::endl;
    std::cout << "================" << std::endl << std::endl;
    SCIP_CALL( SCIPprintBestSol(scip, NULL, FALSE) );
-
 
    /**************
     * Statistics *
@@ -106,8 +111,8 @@ SCIP_RETCODE fromCommandLine(
 /** starts user interactive mode */
 static
 SCIP_RETCODE interactive(
-   SCIP*                      scip                /**< SCIP data structure */
-   )
+        SCIP*                      scip                /**< SCIP data structure */
+)
 {
    SCIP_CALL( SCIPstartInteraction(scip) );
 
@@ -119,9 +124,9 @@ SCIP_RETCODE interactive(
  */
 static
 SCIP_RETCODE runSCIP(
-   int                        argc,               /**< number of shell parameters */
-   char**                     argv                /**< array with shell parameters */
-   )
+        int                        argc,               /**< number of shell parameters */
+        char**                     argv                /**< array with shell parameters */
+)
 {
    SCIP* scip = NULL;
 
@@ -139,10 +144,9 @@ SCIP_RETCODE runSCIP(
    SCIPprintVersion(scip, NULL);
    std::cout << std::endl;
 
-
    /* include default SCIP plugins */
    SCIP_CALL( SCIPincludeDefaultPlugins(scip) );
-
+   SCIP_CALL( SCIPincludeBranchruleGeneralDisjunction(scip) );
 
    /**************
     * Parameters *
@@ -158,14 +162,14 @@ SCIP_RETCODE runSCIP(
    }
    /*CHECK_OKAY( SCIPwriteParams(scip, "scipmip.set", TRUE) );*/
 
-
    /**************
     * Start SCIP *
     **************/
 
    if( argc >= 2 )
    {
-      SCIP_CALL( fromCommandLine(scip, argv[1]) );
+      const char* solfilename = (argc >= 4) ? argv[3] : NULL;
+      SCIP_CALL( fromCommandLine(scip, argv[1], solfilename) );
    }
    else
    {
@@ -174,7 +178,6 @@ SCIP_RETCODE runSCIP(
       SCIP_CALL( interactive(scip) );
    }
 
-   
    /********************
     * Deinitialization *
     ********************/
@@ -188,9 +191,9 @@ SCIP_RETCODE runSCIP(
 
 /** main method starting SCIP */
 int main(
-   int                        argc,          /**< number of arguments from the shell */
-   char**                     argv           /**< array of shell arguments */
-   )
+        int                        argc,          /**< number of arguments from the shell */
+        char**                     argv           /**< array of shell arguments */
+)
 {
    SCIP_RETCODE retcode;
 

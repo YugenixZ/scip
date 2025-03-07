@@ -41,29 +41,42 @@
 using namespace UG;
 using namespace ParaSCIP;
 
+class GeneralBranchUserPlugins : public ScipUserPlugins {
+    void operator()(SCIP *scip)
+    {
+       SCIP_CALL_ABORT( SCIPincludeBranchruleGeneralDisjunction(scip) );
+       // SCIP_CALL_ABORT( SCIPsetIntParam(scip, "timing/clocktype", 2) );
+       // SCIP_CALL_ABORT( SCIPsetIntParam(scip, "lp/solvefreq", -1) );
+       // SCIP_CALL_ABORT( SCIPsetIntParam(scip, "relaxing/SDP/freq", 1) );
+       // SCIP_CALL_ABORT( SCIPsetRealParam(scip, "numerics/epsilon", 1e-9) );
+       // SCIP_CALL_ABORT( SCIPsetRealParam(scip, "numerics/sumepsilon", 1e-6) );
+       // SCIP_CALL_ABORT( SCIPsetRealParam(scip, "numerics/feastol", 1e-6) );
+       // SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "lp/cleanuprows", FALSE) );
+       // SCIP_CALL_ABORT( SCIPsetBoolParam(scip, "lp/cleanuprowsroot", FALSE) );
+       // SCIP_CALL_ABORT( SCIPsetIntParam(scip, "nodeselection/hybridestim/stdpriority", 1000000) );
+       // SCIP_CALL_ABORT( SCIPsetIntParam(scip, "nodeselection/hybridestim/maxplungedepth", 0) );
+       // SCIP_CALL_ABORT( SCIPsetRealParam(scip, "nodeselection/hybridestim/estimweight", 0.0) );
+
+    }
+};
+
 void
-setUserPlugins(
-   ParaInitiator *inInitiator
-   )
+setUserPlugins(ParaInitiator *inInitiator)
 {
    ScipParaInitiator *initiator = dynamic_cast<ScipParaInitiator *>(inInitiator);
-   initiator->setUserPlugins(0);
+   initiator->setUserPlugins(new GeneralBranchUserPlugins());
 }
 
 void
-setUserPlugins(
-   ParaInstance *inInstance
-   )
+setUserPlugins(ParaInstance *inInstance)
 {
    ScipParaInstance *instance = dynamic_cast<ScipParaInstance *>(inInstance);
-   instance->setUserPlugins(0);
+   instance->setUserPlugins(new GeneralBranchUserPlugins());
 }
 
 void
-setUserPlugins(
-   ParaSolver *inSolver
-   )
+setUserPlugins(ParaSolver *inSolver)
 {
    ScipParaSolver *solver = dynamic_cast<ScipParaSolver *>(inSolver);
-   solver->setUserPlugins(0);
+   solver->setUserPlugins(new GeneralBranchUserPlugins());
 }

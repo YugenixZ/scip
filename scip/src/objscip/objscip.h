@@ -53,5 +53,6 @@
 #include "objscip/objsepa.h"
 #include "objscip/objvardata.h"
 #include "objscip/objcloneable.h"
+#include "objscip/branch_generaldisjunction.h"
 
 #endif
