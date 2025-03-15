@@ -40,10 +40,47 @@
 #include <vector>
 using namespace std;
 
+struct CSRMatrix {
+    std::vector<SCIP_Real> values;
+    std::vector<int> col_indices;
+    std::vector<int> row_ptr;
+    int num_rows;
+    int num_cols;
+
+    CSRMatrix transpose() {
+         CSRMatrix At;
+         At.num_rows = num_cols;
+         At.num_cols = num_rows;
+         At.row_ptr.resize(num_cols + 1, 0);
+         At.values.resize(values.size());
+         At.col_indices.resize(col_indices.size());
+         for (int i = 0; i < values.size(); i++) {
+             At.row_ptr[col_indices[i] + 1]++;
+         }
+         for (int i = 1; i <= num_cols; i++) {
+             At.row_ptr[i] += At.row_ptr[i - 1];
+         }
+         std::vector<int> temp(At.row_ptr);
+         std::vector<int> temp2(At.col_indices);
+         std::vector<SCIP_Real> temp3(At.values);
+         for (int i = 0; i < num_rows; i++) {
+             for (int j = row_ptr[i]; j < row_ptr[i + 1]; j++) {
+                 int col = col_indices[j];
+                 int dest = temp[col];
+                 temp[col]++;
+                 At.col_indices[dest] = i;
+                 At.values[dest] = values[j];
+             }
+         }
+         return At;
+    }
+};
+
 typedef struct {
-    std::vector<std::vector<SCIP_Real>> A;   // constraint matrix
-    std::vector<SCIP_Real> b;            // right hand side vector
-    std::vector<SCIP_Real> c;            // objective vector
+    CSRMatrix A;   // constraint matrix
+    std::vector<SCIP_Real> b;
+    std::vector<SCIP_Real> c;
+
 } MatrixData;
 
 typedef struct {

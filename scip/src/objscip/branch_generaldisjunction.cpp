@@ -43,7 +43,7 @@
 #include "scip/scipdefplugins.h"
 #include "scip/struct_lp.h"
 #include "scip/scip.h"
-
+#include <iomanip>
 
 #define scip_name_            "general_disjunction"
 #define scip_desc_           "branching rule with general disjunctions"
@@ -62,6 +62,10 @@ extern "C" {
 /** branching rule data */
 class BranchruleGeneralDisjunction : public scip::ObjBranchrule {
 public:
+    int M = 1;
+    int k = 2;
+    SCIP_Real delta = 0.05;
+
     explicit BranchruleGeneralDisjunction(SCIP* scip)
             : ObjBranchrule(scip, scip_name_, scip_desc_, scip_priority_, scip_maxdepth_, scip_maxbounddist_) {}
     virtual SCIP_DECL_BRANCHEXECLP(scip_execlp);
@@ -71,94 +75,173 @@ public:
  */
 /* get the LP constraint matrix A, vector b and objective vector c*/
 static
-MatrixData getConstraintMatrix(SCIP* scip)
-{
-   SCIP_COL** cols = SCIPgetLPCols(scip);
-   SCIP_ROW** rows = SCIPgetLPRows(scip);
-   int ncols = SCIPgetNLPCols(scip);
-   int nrows = SCIPgetNLPRows(scip);
+MatrixData getConstraintMatrix(SCIP* scip) {
+    SCIP_COL** cols = SCIPgetLPCols(scip);
+    SCIP_ROW** rows = SCIPgetLPRows(scip);
+    int ncols = SCIPgetNLPCols(scip);
+    int nrows = SCIPgetNLPRows(scip);
 
-   MatrixData LP_data;
+    MatrixData LP_data;
+    LP_data.c.resize(ncols);
+    LP_data.b.reserve(nrows * 2); // Reserve extra space for equality constraints
 
-   // Extract objective coefficients
-   LP_data.c.resize(ncols);
-   for (int i = 0; i < ncols; ++i)
-   {
-      LP_data.c[i] = SCIPcolGetObj(cols[i]);
-   }
+    // Extract objective coefficients
+    for (int i = 0; i < ncols; ++i) {
 
-   // Extract the constraint matrix A and vector b
-   LP_data.A.resize(nrows, vector<SCIP_Real>(ncols, 0.0));
-   LP_data.b.resize(nrows);
+        LP_data.c[i] = SCIPcolGetObj(cols[i]);
+    }
 
-   for (int i = 0; i < nrows; ++i)
-   {
-      SCIP_ROW* row = rows[i];
-      SCIP_COL** rowcols = SCIProwGetCols(row); // nonzeros columns of the row
-      SCIP_Real* rowvals = SCIProwGetVals(row); // nonzeros values of the row
-      int num_nonz = SCIProwGetNNonz(row); // number of nonzeros entrises(cols) in the row
-      assert(sizeof(rowvals) == sizeof(rowcols));
-      for (int j = 0; j < num_nonz; ++j)
-      {
-         int colindex = SCIPcolGetLPPos(rowcols[j]);
-         LP_data.A[i][colindex] = rowvals[j];
+    // Initialize row_ptr with the starting index of each row
+    LP_data.A.row_ptr.push_back(0);
+    int count_eq = 0;
+    int count_range = 0;
+    for (int i = 0; i < nrows; ++i) {
+        SCIP_ROW* row = rows[i];
+//        SCIP_Bool rowiscut = SCIProwIsInGlobalCutpool(row);
+//        cout << "rowiscut: " << rowiscut << endl;
+        SCIP_COL** rowcols = SCIProwGetCols(row); // Nonzero columns
+        SCIP_Real* rowvals = SCIProwGetVals(row); // Nonzero values
+        int num_nonz = SCIProwGetNNonz(row); // Number of nonzeros
+
+        for (int j = 0; j < num_nonz; ++j) {
+            int colindex = SCIPcolGetLPPos(rowcols[j]);
+            LP_data.A.values.push_back(rowvals[j]);
+            LP_data.A.col_indices.push_back(colindex);
+        }
+
+        // Handle the constraint right-hand side
+        SCIP_Real lhs = SCIProwGetLhs(row);
+        SCIP_Real rhs = SCIProwGetRhs(row);
+
+        if (lhs == rhs) { // Equality constraint: Convert to two inequalities
+            LP_data.b.push_back(lhs); // Ax >= b
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+            // Convert Ax ≤ b to -Ax ≥ -b
+            for (int j = 0; j < num_nonz; ++j) {
+                int colindex = SCIPcolGetLPPos(rowcols[j]);
+                LP_data.A.values.push_back(-rowvals[j]);
+                LP_data.A.col_indices.push_back(colindex);
+            }
+            LP_data.b.push_back(-lhs);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+            count_eq++;
+        }
+        else if (lhs != -SCIPinfinity(scip) && rhs != SCIPinfinity(scip)) {
+            LP_data.b.push_back(lhs);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+            for (int j = 0; j < num_nonz; ++j) {
+                int colindex = SCIPcolGetLPPos(rowcols[j]);
+                LP_data.A.values.push_back(-rowvals[j]);
+                LP_data.A.col_indices.push_back(colindex);
+            }
+            LP_data.b.push_back(-rhs);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+            count_range++;
+        }
+        else if (lhs == -SCIPinfinity(scip)) { // Ax ≤ rhs
+            LP_data.b.push_back(-rhs);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+            int abs_idx = i + count_eq + count_range;
+            assert(abs_idx == LP_data.A.row_ptr.size() - 2);
+            for (int j = LP_data.A.row_ptr[abs_idx]; j < LP_data.A.row_ptr[abs_idx + 1]; ++j) {
+                LP_data.A.values[j] = -LP_data.A.values[j];
+            }
+        }
+        else if (rhs == SCIPinfinity(scip)) { // Ax ≥ lhs
+            LP_data.b.push_back(lhs);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+        }
+    }
+    // Handle variable bounds as constraints
+    for (int i = 0; i < ncols; ++i) {
+
+        SCIP_VAR* var = SCIPcolGetVar(cols[i]);
+        SCIP_Real lb = SCIPvarGetLbLocal(var);
+        SCIP_Real ub = SCIPvarGetUbLocal(var);
+
+        if (lb > -SCIPinfinity(scip)) { // x >= lb
+            LP_data.A.values.push_back(1.0);
+            LP_data.A.col_indices.push_back(i);
+            LP_data.b.push_back(lb);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+        }
+        if (ub < SCIPinfinity(scip)) { // x ≤ ub → -x ≥ -ub
+            LP_data.A.values.push_back(-1.0);
+            LP_data.A.col_indices.push_back(i);
+            LP_data.b.push_back(-ub);
+            LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+        }
+    }
+   // Add cuts to the matrix
+   SCIP_ROW** cuts = SCIPgetCuts(scip);
+   int ncuts = SCIPgetNCuts(scip);
+   for (int i = 0; i < ncuts; ++i) {
+      SCIP_ROW* cut = cuts[i];
+      SCIP_COL** cutcols = SCIProwGetCols(cut); // Nonzero columns
+      SCIP_Real* cutvals = SCIProwGetVals(cut); // Nonzero values
+      int num_nonz = SCIProwGetNNonz(cut); // Number of nonzeros
+
+      for (int j = 0; j < num_nonz; ++j) {
+         int colindex = SCIPcolGetLPPos(cutcols[j]);
+         LP_data.A.values.push_back(cutvals[j]);
+         LP_data.A.col_indices.push_back(colindex);
       }
-      SCIP_Real lhs = SCIProwGetLhs(row);
-      SCIP_Real rhs = SCIProwGetRhs(row);
-      if (lhs == rhs)
-      {
-         LP_data.b[i] = lhs;
+
+      // Handle the cut right-hand side
+      SCIP_Real lhs = SCIProwGetLhs(cut);
+      SCIP_Real rhs = SCIProwGetRhs(cut);
+
+      if (lhs == rhs) { // Equality cut: Convert to two inequalities
+         LP_data.b.push_back(lhs); // Ax >= b
+         LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+         // Convert Ax ≤ b to -Ax ≥ -b
+         for (int j = 0; j < num_nonz; ++j) {
+            int colindex = SCIPcolGetLPPos(cutcols[j]);
+            LP_data.A.values.push_back(-cutvals[j]);
+            LP_data.A.col_indices.push_back(colindex);
+         }
          LP_data.b.push_back(-lhs);
-         LP_data.A.emplace_back(ncols, 0);
-         for (int j = 0; j < ncols; ++j)
-         {
-            LP_data.A.back()[j] = -LP_data.A[i][j];
+         LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+      }
+      else if (lhs != -SCIPinfinity(scip) && rhs != SCIPinfinity(scip)) {
+         LP_data.b.push_back(lhs);
+         LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+         for (int j = 0; j < num_nonz; ++j) {
+            int colindex = SCIPcolGetLPPos(cutcols[j]);
+            LP_data.A.values.push_back(-cutvals[j]);
+            LP_data.A.col_indices.push_back(colindex);
+         }
+         LP_data.b.push_back(-rhs);
+         LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+      }
+      else if (lhs == -SCIPinfinity(scip)) { // Ax ≤ rhs
+         LP_data.b.push_back(-rhs);
+         LP_data.A.row_ptr.push_back(LP_data.A.values.size());
+         int abs_idx = i + count_eq + count_range;
+         assert(abs_idx == LP_data.A.row_ptr.size() - 2);
+         for (int j = LP_data.A.row_ptr[abs_idx]; j < LP_data.A.row_ptr[abs_idx + 1]; ++j) {
+            LP_data.A.values[j] = -LP_data.A.values[j];
          }
       }
-      else if (lhs == -SCIPinfinity(scip))
-      {
-         LP_data.b[i] = -rhs;
-         for (int j = 0; j < ncols; ++j)
-         {
-            LP_data.A[i][j] = -LP_data.A[i][j];
-         }
-      }
-      else
-      {
-         LP_data.b[i] = lhs;
+      else if (rhs == SCIPinfinity(scip)) { // Ax ≥ lhs
+         LP_data.b.push_back(lhs);
+         LP_data.A.row_ptr.push_back(LP_data.A.values.size());
       }
    }
 
-   // Add the bounds of each column to the constraint matrix A and vector b
-   for (int i = 0; i < ncols; ++i)
-   {
-      SCIP_Real lb = SCIPcolGetLb(cols[i]);
-      SCIP_Real ub = SCIPcolGetUb(cols[i]);
-      if (lb > -SCIPinfinity(scip))
-      {
-         std::vector<SCIP_Real> row(ncols, 0.0);
-         int idx_row = SCIPcolGetLPPos(cols[i]);
-         row[idx_row] = 1.0;
-         LP_data.A.push_back(row);
-         LP_data.b.push_back(lb);
-      }
-      if (ub < SCIPinfinity(scip))
-      {
-         std::vector<SCIP_Real> row(ncols, 0.0);
-         int idx_row = SCIPcolGetLPPos(cols[i]);
-         row[idx_row] = -1.0;
-         LP_data.A.push_back(row);
-         LP_data.b.push_back(-ub);
-      }
-   }
+    assert(LP_data.c.size() == ncols);
+    assert(LP_data.b.size() == LP_data.A.row_ptr.size() - 1);
 
-   return LP_data;
+    LP_data.A.num_rows = LP_data.b.size();
+    LP_data.A.num_cols = ncols;
+
+    return LP_data;
 }
 
 static
 SubmodelVars submodel_create(
         SCIP* scip,
-        vector<vector<SCIP_Real>> A,
+        CSRMatrix A,
         vector<SCIP_Real> b,
         vector<SCIP_Real> c,
         int M,
@@ -168,8 +251,8 @@ SubmodelVars submodel_create(
 ){
 
    // Create the submodel
-   int m = A.size();
-   int n = A[0].size();
+   int m = b.size();
+   int n = c.size();
    SCIP *model_sub;
    SCIP_RETCODE retcode;
 
@@ -270,18 +353,31 @@ SubmodelVars submodel_create(
    SCIP_CALL_ABORT(SCIPaddVar(model_sub, pi0));
 
 // Add constraints
-   for (int j = 0; j < n; ++j) {
-      SCIP_CONS* cons;
-      SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, ("cons_pA_" + to_string(j)).c_str(), 0, nullptr, nullptr, 0.0, 0.0));
-      for (int i = 0; i < m; ++i) {
-         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, p[i], A[i][j]));
-      }
-      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, s_L, -c[j]));
-      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[j], -1.0));
-      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[j], 1.0));
-      SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
-      SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
-   }
+//   for (int j = 0; j < n; ++j) {
+//      SCIP_CONS* cons;
+//      SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, ("cons_pA_" + to_string(j)).c_str(), 0, nullptr, nullptr, 0.0, 0.0));
+//      for (int i = A.row_ptr[j]; i < A.row_ptr[j + 1]; ++i) {
+//         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, p[A.col_indices[i]], A.values[i]));
+//      }
+//      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, s_L, -c[j]));
+//      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[j], -1.0));
+//      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[j], 1.0));
+//      SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
+//      SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
+//   }
+     for (int j = 0; j < n; ++j ){
+         SCIP_CONS* cons;
+         SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, ("cons_pA_" + to_string(j)).c_str(), 0, nullptr, nullptr, -SCIPinfinity(model_sub), 0.0));
+         CSRMatrix At = A.transpose();
+         for (int i = At.row_ptr[j]; i < At.row_ptr[j + 1]; ++i) {
+            SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, p[At.col_indices[i]], At.values[i]));
+         }
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, s_L, -c[j]));
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[j], -1.0));
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[j], 1.0));
+         SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
+         SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
+     }
 
    {
       SCIP_CONS* cons;
@@ -295,18 +391,38 @@ SubmodelVars submodel_create(
       SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
    }
 
-   for (int j = 0; j < n; ++j) {
-      SCIP_CONS* cons;
-      SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, ("cons_qA_" + to_string(j)).c_str(), 0, nullptr, nullptr, 0.0, 0.0));
-      for (int i = 0; i < m; ++i) {
-         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, q[i], A[i][j]));
-      }
-      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, s_R, -c[j]));
-      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[j], 1.0));
-      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[j], -1.0));
-      SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
-      SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
-   }
+//   for (int j = 0; j < n; ++j) {
+//      SCIP_CONS* cons;
+//      SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, ("cons_qA_" + to_string(j)).c_str(), 0, nullptr, nullptr, 0.0, 0.0));
+//      for (int i = 0; i < n; ++i) {
+//         SCIP_Real coef = 0.0;
+//         for (int k = A.row_ptr[j]; k < A.row_ptr[j + 1]; ++k) {
+//            if (A.col_indices[k] == i) {
+//               coef = A.values[k];
+//               break;
+//            }
+//         }
+//         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, q[i], coef));
+//      }
+//      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, s_R, -c[j]));
+//      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[j], 1.0));
+//      SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[j], -1.0));
+//      SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
+//      SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
+//   }
+     for (int j = 0; j < n; ++j){
+         SCIP_CONS* cons;
+         SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_sub, &cons, ("cons_qA_" + to_string(j)).c_str(), 0, nullptr, nullptr, -SCIPinfinity(model_sub), 0.0));
+         CSRMatrix At = A.transpose();
+         for (int i = At.row_ptr[j]; i < At.row_ptr[j + 1]; ++i) {
+            SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, q[At.col_indices[i]], At.values[i]));
+         }
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, s_R, -c[j]));
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_plus[j], 1.0));
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_sub, cons, pi_minus[j], -1.0));
+         SCIP_CALL_ABORT(SCIPaddCons(model_sub, cons));
+         SCIP_CALL_ABORT(SCIPreleaseCons(model_sub, &cons));
+     }
 
    {
       SCIP_CONS* cons;
@@ -368,7 +484,7 @@ SubmodelVars submodel_create(
       }
    }
 
-   retcode = SCIPreadParams(model_sub, "def_fscip.set");
+   retcode = SCIPreadParams(model_sub, "/home/optimi/yzhou/opt/scip_yzhou/tmp/tmp.CTNuFPJGhE/scipoptsuite-9.1.0/ug/settings/default.set");
    if (retcode != SCIP_OKAY) {
       SCIPprintError(retcode);
       SCIPfree(&model_sub);
@@ -388,7 +504,7 @@ SubmodelVars submodel_create(
 static
 pair<SCIP_Status, SCIP_Real> ckmodel_create(
         const string& name,
-        vector<vector<SCIP_Real>> A,
+        CSRMatrix A,
         vector<SCIP_Real> b,
         vector<SCIP_Real> c,
         int m,
@@ -420,7 +536,7 @@ pair<SCIP_Status, SCIP_Real> ckmodel_create(
       SCIPprintError(retcode);
       return {SCIP_STATUS_INFEASIBLE,1e+20};
    }
-   SCIPreadParams(model_ck, "def_fscip.set");
+   SCIPreadParams(model_ck, "/home/optimi/yzhou/opt/scip_yzhou/tmp/tmp.CTNuFPJGhE/scipoptsuite-9.1.0/ug/settings/default.set");
    for (int i = 0; i < n; ++i) {
       SCIP_VAR * var;
       SCIPcreateVarBasic(model_ck, &var, ("x_" + to_string(i)).c_str(), -SCIPinfinity(model_ck), SCIPinfinity(model_ck), c[i], SCIP_VARTYPE_CONTINUOUS);
@@ -428,15 +544,15 @@ pair<SCIP_Status, SCIP_Real> ckmodel_create(
       x[i] = var;
    }
 
-   for (int j = 0; j < m; ++j) {
-      SCIP_CONS * cons;
-      SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j],SCIPinfinity(model_ck));
-      for (int i = 0; i < n; ++i) {
-         SCIPaddCoefLinear(model_ck, cons, x[i], A[j][i]);
-      }
-      SCIPaddCons(model_ck, cons);
-      SCIPreleaseCons(model_ck, &cons);
+for (int j = 0; j < m; ++j) {
+   SCIP_CONS * cons;
+   SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j], SCIPinfinity(model_ck));
+   for (int i = A.row_ptr[j]; i < A.row_ptr[j + 1]; ++i) {
+      SCIPaddCoefLinear(model_ck, cons, x[A.col_indices[i]], A.values[i]);
    }
+   SCIPaddCons(model_ck, cons);
+   SCIPreleaseCons(model_ck, &cons);
+}
 
    if (condition == "pi0") {
       SCIP_CONS* cons;
@@ -462,13 +578,14 @@ pair<SCIP_Status, SCIP_Real> ckmodel_create(
    SCIPsolve(model_ck);
    SCIP_Status status = SCIPgetStatus(model_ck);
    if (status == SCIP_STATUS_OPTIMAL) {
-      SCIP_SOL* sol = SCIPgetBestSol(model_ck);
-      SCIP_Real sol_val = SCIPgetSolOrigObj(model_ck, sol);
+//      SCIP_SOL* sol = SCIPgetBestSol(model_ck);
+//      SCIP_Real sol_val = SCIPgetSolOrigObj(model_ck, sol);
+      SCIP_Real sol_primal = SCIPgetPrimalbound(model_ck);
       for (int i = 0; i < n; ++i) {
          SCIPreleaseVar(model_ck, &x[i]);
       }
       SCIPfree(&model_ck);
-      return {status, sol_val};
+      return {status, sol_primal};
    }
    else {
       for (int i = 0; i < n; ++i) {
@@ -515,7 +632,7 @@ vector<Submodel_sols> submodel_solve(
          int m,
          int n,
          SCIP_Real delta,
-         vector<vector<SCIP_Real>> A,
+         CSRMatrix A,
          vector<SCIP_Real> b,
          vector<SCIP_Real> c,
          int M,
@@ -536,9 +653,9 @@ vector<Submodel_sols> submodel_solve(
       SubmodelVars submodel_datas = submodel_create(scip, A, b, c, M, k, delta, zl);
       SCIP_RETCODE retcode = SCIPsolve(submodel_datas.model_sub);
       if (retcode != SCIP_OKAY) {
-      std::cerr << "Error solving submodel: " << std::endl;
-      Submodel_sols result = {SCIP_INVALID, {}, {}, NULL, NULL, "NULL", "NULL"};
-      final_results.push_back(result);
+         std::cerr << "Error solving submodel: " << std::endl;
+         Submodel_sols result = {SCIP_INVALID, {}, {}, NULL, NULL, "NULL", "NULL"};
+         final_results.push_back(result);
 
       return final_results;
       }
@@ -817,12 +934,12 @@ SCIP_RETCODE createBranchingConstraint(
    return SCIP_OKAY;
 };
 static
-SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real>& b, const vector<SCIP_Real>& c) {
+SCIP* createTestModel(const CSRMatrix A, const vector<SCIP_Real>& b, const vector<SCIP_Real>& c) {
    SCIP* model_test = nullptr;
    SCIP_CALL_ABORT(SCIPcreate(&model_test));
    SCIP_CALL_ABORT(SCIPincludeDefaultPlugins(model_test));
    SCIP_CALL_ABORT(SCIPcreateProbBasic(model_test, "test_model"));
-   SCIP_CALL_ABORT(SCIPreadParams(model_test, "def_fscip.set"));
+   SCIP_CALL_ABORT(SCIPreadParams(model_test, "/home/optimi/yzhou/opt/scip_yzhou/tmp/tmp.CTNuFPJGhE/scipoptsuite-9.1.0/ug/settings/default.set"));
    int n = c.size();
    int m = b.size();
    vector<SCIP_VAR*> vars(n);
@@ -839,8 +956,8 @@ SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real
    for (int i = 0; i < m; ++i) {
       SCIP_CONS* cons;
       SCIP_CALL_ABORT(SCIPcreateConsBasicLinear(model_test, &cons, ("cons_" + to_string(i)).c_str(), 0, nullptr, nullptr, b[i], SCIPinfinity(model_test)));
-      for (int j = 0; j < n; ++j) {
-         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_test, cons, vars[j], A[i][j]));
+      for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
+         SCIP_CALL_ABORT(SCIPaddCoefLinear(model_test, cons, vars[A.col_indices[j]], A.values[j]));
       }
       SCIP_CALL_ABORT(SCIPaddCons(model_test, cons));
       SCIP_CALL_ABORT(SCIPreleaseCons(model_test, &cons));
@@ -848,7 +965,7 @@ SCIP* createTestModel(const vector<vector<SCIP_Real>>& A, const vector<SCIP_Real
 
    // Set objective function
    SCIP_CALL_ABORT(SCIPsetObjsense(model_test, SCIP_OBJSENSE_MINIMIZE));
-
+//   SCIPsetMessagehdlrQuiet(model_test, TRUE);
    return model_test;
 }
 static
@@ -873,40 +990,30 @@ SCIP_Real get_factor(SCIP_Real lp_gap) {
 /** branching execution method for fractional LP solutions */
 SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
    {  /*lint --e{715}*/
+      SCIP_Node *curr_Node = get_information(scip);
       MatrixData LP_data = getConstraintMatrix(scip);
-      std::vector<std::vector<SCIP_Real>> A = LP_data.A;
+      CSRMatrix A = LP_data.A;
       std::vector<SCIP_Real> b = LP_data.b;
       std::vector<SCIP_Real> c = LP_data.c;
-//      //assert Ax >= b
-//      SCIP* test_model = createTestModel(A, b, c);
-//      SCIP_CALL_ABORT(SCIPsolve(test_model));
-//      SCIP_SOL* sol_t = SCIPgetBestSol(test_model);
-//      if (sol_t != nullptr) {
-//         SCIP_Real sum = 0.0;
-//         for (int i = 0; i < c.size(); ++i) {
-//            SCIP_VAR * var = SCIPgetVars(test_model)[i];
-//            sum += c[i] * SCIPgetSolVal(test_model, sol_t, var);
-//         }
-//
-//         cout << "The Best sol val is :" << sum << endl;
-//      }
-//      SCIP_Real LP_objval = SCIPgetLPObjval(scip);
-//      cout << "The LP obj val is :" << LP_objval << endl;
-//      SCIPfree(&test_model);
 
-      SCIP_Node *curr_Node = get_information(scip);
+      SCIP* test_model = createTestModel(A, b, c);
+      SCIP_CALL_ABORT(SCIPsolve(test_model));
+      SCIP_Real LP_obj = SCIPgetLPObjval(scip);
+      SCIP_Real Primalsol = SCIPgetPrimalbound(test_model);
+      cout << fixed << setprecision(10)<<"LP objective: " << LP_obj << endl;
+      cout << "Primal solution: " << Primalsol << endl;
+//      assert((abs(LP_obj - Primalsol)) < 1e-6);
+
       SCIP_Real lp_gap = SCIPgetGap(scip);
+      cout << "gap to the primal bound: " << lp_gap << endl;
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
-      vector<SCIP_VAR*> vars_lp(A[0].size());
-      for (size_t i = 0; i < A[0].size(); ++i) {
+      vector<SCIP_VAR*> vars_lp(c.size());
+      for (size_t i = 0; i < c.size(); ++i) {
           vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
       }
-      size_t m = A.size();
-      size_t n = A[0].size();
-      int M = 1;
-      int k = 2;
+      size_t m = b.size();
+      size_t n = c.size();
       SCIP_Real zl_init = SCIPgetLPObjval(scip);
-      SCIP_Real delta = 0.05;
       SCIP_Real zl_low = zl_init;
       SCIP_Real zl_high;
       SCIP_Real factor = get_factor(lp_gap);
@@ -922,7 +1029,7 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP_Real est_r = final_results[0].est_r;
       string status_l = final_results[0].status_l;
       string status_r = final_results[0].status_r;
-      [[maybe_unused]] SCIP_Real downprio = 1.0;
+      SCIP_Real downprio = 1.0;
 
       if ( status_l == "NULL" || status_r == "NULL") {
          std::cout << "General disjunction: No feasible solution found, use SCIP default branching rule" << std::endl;
