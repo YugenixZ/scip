@@ -91,10 +91,6 @@ MatrixData getConstraintMatrix(SCIP* scip) {
    LP_data.c.resize(ncols);
    LP_data.b.reserve(nrows * 2); // Reserve extra space for equality constraints
 
-    // Extract objective coefficients
-    for (int i = 0; i < ncols; ++i) {
-        LP_data.c[i] = SCIPcolGetObj(cols[i]);
-    }
    // Extract objective coefficients
    for (int i = 0; i < ncols; ++i) {
       LP_data.c[i] = SCIPcolGetObj(cols[i]);
@@ -561,7 +557,7 @@ pair<string, SCIP_Real> check_feasibility(
       if (sol_val - Best_zl > 1e-6) {
          status = "updated_zl";
          //Retrieve the objective value of the solution.
-         est = sol_val ;
+         est = sol_val;
       } else {
          status = "obj_val less than Best_zl";
          est = sol_val;
@@ -1047,6 +1043,8 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP* test_model = createTestModel(A, b, c);
       SCIP_CALL_ABORT(SCIPsolve(test_model));
       SCIP_Real LP_obj = SCIPgetLPObjval(scip);
+      SCIP_Real node_dualbound = SCIPgetNodeDualbound(scip, curr_Node);
+      SCIP_Real node_lowerbound = SCIPgetNodeLowerbound(scip, curr_Node);
 //      SCIP_Real LP_offset = SCIPgetNodeDualbound(scip, curr_Node);
 //       if (LP_offset != 0) {
 //          LP_obj += LP_offset;
@@ -1054,7 +1052,8 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP_Real Primalsol = SCIPgetPrimalbound(test_model);
       cout << "LP objective: " << LP_obj << endl;
       cout << "Primal solution: " << Primalsol << endl;
-
+      cout << "Node dual bound: " << node_dualbound << endl;
+      cout << "Node lower bound" << node_lowerbound << endl;
       SCIP_Real lp_gap = SCIPgetGap(scip);
       cout << "gap to the primal bound: " << lp_gap << endl;
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
@@ -1063,7 +1062,7 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          vars_lp[i] = SCIPcolGetVar(cols_lp[i]);
       }
 
-      SCIP_Real zl_init = LP_obj;
+      SCIP_Real zl_init = node_lowerbound;
       SCIP_Real zl_low = zl_init;
       SCIP_Real zl_high;
       SCIP_Real factor = get_factor(lp_gap);
