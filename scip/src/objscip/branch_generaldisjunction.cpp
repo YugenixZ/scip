@@ -84,8 +84,8 @@ MatrixData getConstraintMatrix(SCIP* scip) {
    SCIP_LPSOLSTAT status_LP = SCIPgetLPSolstat(scip);
    SCIP_COL** cols = SCIPgetLPCols(scip);
    SCIP_ROW** rows = SCIPgetLPRows(scip);
-   int ncols = SCIPgetNLPCols(scip);
-   int nrows = SCIPgetNLPRows(scip);
+   size_t ncols = SCIPgetNLPCols(scip);
+   size_t nrows = SCIPgetNLPRows(scip);
 
    MatrixData LP_data;
    LP_data.c.resize(ncols);
@@ -103,11 +103,10 @@ MatrixData getConstraintMatrix(SCIP* scip) {
    vector<SCIP_Real> x_star(LP_data.c.size());
    if (status_LP == SCIP_LPSOLSTAT_OPTIMAL) {
 
-      SCIP_Real epsilon = 1e-4;
-      SCIP_COL **cols = SCIPgetLPCols(scip);
+      SCIP_COL **lp_cols = SCIPgetLPCols(scip);
 
-      for (int j = 0; j < LP_data.c.size(); ++j) {
-         x_star[j] = SCIPgetSolVal(scip, nullptr, SCIPcolGetVar(cols[j]));
+      for (size_t j = 0; j < LP_data.c.size(); ++j) {
+         x_star[j] = SCIPgetSolVal(scip, nullptr, SCIPcolGetVar(lp_cols[j]));
       }
    }
    for (int i = 0; i < nrows; ++i) {
@@ -141,14 +140,6 @@ MatrixData getConstraintMatrix(SCIP* scip) {
          }
          LP_data.b.push_back(-lhs);
          LP_data.A.row_ptr.push_back(LP_data.A.values.size());
-         // Assert Ax_star >= b
-         if (status_LP == SCIP_LPSOLSTAT_OPTIMAL) {
-            SCIP_Real Ax = 0.0;
-            for (int j = 0; j < num_nonz; ++j) {
-               SCIP_Real colval = SCIPcolGetPrimsol(cols[j]);
-               Ax += rowvals[j] * colval;
-            }
-         }
          count_eq++;
       }
       else if (lhs != -SCIPinfinity(scip) && rhs != SCIPinfinity(scip)) {
@@ -161,19 +152,12 @@ MatrixData getConstraintMatrix(SCIP* scip) {
          }
          LP_data.b.push_back(-rhs);
          LP_data.A.row_ptr.push_back(LP_data.A.values.size());
-         if (status_LP == SCIP_LPSOLSTAT_OPTIMAL) {
-            SCIP_Real Ax = 0.0;
-            for (int j = 0; j < num_nonz; ++j) {
-               SCIP_Real colval = SCIPcolGetPrimsol(cols[j]);
-               Ax += rowvals[j] * colval;
-            }
-         }
          count_range++;
       }
       else if (lhs == -SCIPinfinity(scip)) { // Ax ≤ rhs
          LP_data.b.push_back(-rhs);
          LP_data.A.row_ptr.push_back(LP_data.A.values.size());
-         int abs_idx = i + count_eq + count_range;
+         size_t abs_idx = i + count_eq + count_range;
          assert(abs_idx == LP_data.A.row_ptr.size() - 2);
          for (int j = LP_data.A.row_ptr[abs_idx]; j < LP_data.A.row_ptr[abs_idx + 1]; ++j) {
             LP_data.A.values[j] = -LP_data.A.values[j];
@@ -492,15 +476,15 @@ pair<SCIP_Status, SCIP_Real> ckmodel_create(
       x[i] = var;
    }
 
-for (int j = 0; j < m; ++j) {
-   SCIP_CONS * cons;
-   SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j], SCIPinfinity(model_ck));
-   for (int i = A.row_ptr[j]; i < A.row_ptr[j + 1]; ++i) {
-      SCIPaddCoefLinear(model_ck, cons, x[A.col_indices[i]], A.values[i]);
+   for (int j = 0; j < m; ++j) {
+      SCIP_CONS * cons;
+      SCIPcreateConsBasicLinear(model_ck, &cons, ("cons_" + to_string(j)).c_str(), 0, NULL, NULL, b[j], SCIPinfinity(model_ck));
+      for (int i = A.row_ptr[j]; i < A.row_ptr[j + 1]; ++i) {
+         SCIPaddCoefLinear(model_ck, cons, x[A.col_indices[i]], A.values[i]);
+      }
+      SCIPaddCons(model_ck, cons);
+      SCIPreleaseCons(model_ck, &cons);
    }
-   SCIPaddCons(model_ck, cons);
-   SCIPreleaseCons(model_ck, &cons);
-}
 
    if (condition == "pi0") {
       SCIP_CONS* cons;
@@ -668,14 +652,16 @@ vector<Submodel_sols> submodel_solve(
                }
                SCIPfree(&submodel_datas.model_sub);
             } else if (result_l.first == "infeasible" && result_r.first == "infeasible") {
-               feasible_zl.push(zl);
-               best_pi_solutions.push(pi_solution);
-               best_pi0_solutions.push(pi0_solution);
-               Status_l.push(result_l.first);
-               Status_r.push(result_r.first);
-               estL_list.push(result_l.second);
-               estR_list.push(result_r.second);
+
                if (feasible_zl.size() > 1) {
+                  feasible_zl.push(zl);
+                  best_pi_solutions.push(pi_solution);
+                  best_pi0_solutions.push(pi0_solution);
+                  Status_l.push(result_l.first);
+                  Status_r.push(result_r.first);
+                  estL_list.push(result_l.second);
+                  estR_list.push(result_r.second);
+
                   feasible_zl.pop();
                   best_pi_solutions.pop();
                   best_pi0_solutions.pop();
@@ -683,7 +669,16 @@ vector<Submodel_sols> submodel_solve(
                   Status_r.pop();
                   estL_list.pop();
                   estR_list.pop();
+               } else if (feasible_zl.empty()){
+                  feasible_zl.push(zl);
+                  best_pi_solutions.push(pi_solution);
+                  best_pi0_solutions.push(pi0_solution);
+                  Status_l.push(result_l.first);
+                  Status_r.push(result_r.first);
+                  estL_list.push(result_l.second);
+                  estR_list.push(result_r.second);
                }
+
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_L);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.s_R);
                SCIPreleaseVar(submodel_datas.model_sub, &submodel_datas.pi0);
@@ -774,31 +769,31 @@ SCIP_NODE* get_information(SCIP* scip) {
    SCIP_NODE* curr_Node = SCIPgetCurrentNode(scip);
    std::cout << "Current branching Node number: " << SCIPnodeGetNumber(curr_Node) << std::endl;
 
-   if (SCIPnodeGetDepth(curr_Node) > 0) {
-      int num_addedCons = SCIPnodeGetNAddedConss(curr_Node);
-      auto** addedconss = (SCIP_CONS**) malloc(num_addedCons * sizeof(SCIP_CONS*));
-      if (num_addedCons == 0) {
-         std::cout << "No constraints added" << std::endl;
+   // if (SCIPnodeGetDepth(curr_Node) > 0) {
+   //    int num_addedCons = SCIPnodeGetNAddedConss(curr_Node);
+   //    auto** addedconss = (SCIP_CONS**) malloc(num_addedCons * sizeof(SCIP_CONS*));
+   //    if (num_addedCons == 0) {
+   //       std::cout << "No constraints added" << std::endl;
 
-      } else {
-         int nconss;
-         SCIPnodeGetAddedConss(curr_Node, addedconss, &nconss ,num_addedCons);
-         assert(nconss == num_addedCons);
-         vector<SCIP_CONS *> addedconss_vec(addedconss, addedconss + num_addedCons);
-         std::cout << "Number of added constraints: " << num_addedCons << std::endl;
-         for (int i = 0; i < num_addedCons; ++i) {
-            SCIP_ROW* row = SCIPgetRowLinear(scip, addedconss_vec[i]);
-            std::cout << "Added constraint: ";
-            SCIP_Real* vals = SCIProwGetVals(row);
-            for (int j = 0; j < SCIProwGetNNonz(row); ++j) {
-               std::cout << vals[j] << " ";
-            }
-            std::cout << std::endl;
-            std::cout << "Rhs: " << SCIProwGetRhs(row) << std::endl;
-            std::cout << "Lhs: " << SCIProwGetLhs(row) << std::endl;
-         }
-      }
-   }
+   //    } else {
+   //       int nconss;
+   //       SCIPnodeGetAddedConss(curr_Node, addedconss, &nconss ,num_addedCons);
+   //       assert(nconss == num_addedCons);
+   //       vector<SCIP_CONS *> addedconss_vec(addedconss, addedconss + num_addedCons);
+   //       std::cout << "Number of added constraints: " << num_addedCons << std::endl;
+   //       for (int i = 0; i < num_addedCons; ++i) {
+   //          SCIP_ROW* row = SCIPgetRowLinear(scip, addedconss_vec[i]);
+   //          std::cout << "Added constraint: ";
+   //          SCIP_Real* vals = SCIProwGetVals(row);
+   //          for (int j = 0; j < SCIProwGetNNonz(row); ++j) {
+   //             std::cout << vals[j] << " ";
+   //          }
+   //          std::cout << std::endl;
+   //          std::cout << "Rhs: " << SCIProwGetRhs(row) << std::endl;
+   //          std::cout << "Lhs: " << SCIProwGetLhs(row) << std::endl;
+   //       }
+   //    }
+   // }
    return curr_Node;
 }
 
@@ -1043,7 +1038,6 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP* test_model = createTestModel(A, b, c);
       SCIP_CALL_ABORT(SCIPsolve(test_model));
       SCIP_Real LP_obj = SCIPgetLPObjval(scip);
-      SCIP_Real node_dualbound = SCIPgetNodeDualbound(scip, curr_Node);
       SCIP_Real node_lowerbound = SCIPgetNodeLowerbound(scip, curr_Node);
 //      SCIP_Real LP_offset = SCIPgetNodeDualbound(scip, curr_Node);
 //       if (LP_offset != 0) {
@@ -1052,8 +1046,7 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP_Real Primalsol = SCIPgetPrimalbound(test_model);
       cout << "LP objective: " << LP_obj << endl;
       cout << "Primal solution: " << Primalsol << endl;
-      cout << "Node dual bound: " << node_dualbound << endl;
-      cout << "Node lower bound" << node_lowerbound << endl;
+
       SCIP_Real lp_gap = SCIPgetGap(scip);
       cout << "gap to the primal bound: " << lp_gap << endl;
       SCIP_COL** cols_lp = SCIPgetLPCols(scip);
@@ -1078,7 +1071,6 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
       SCIP_Real est_r = final_results[0].est_r;
       string status_l = final_results[0].status_l;
       string status_r = final_results[0].status_r;
-      SCIP_Real downprio = 1.0;
 
       if ( status_l == "NULL" || status_r == "NULL") {
          std::cout << "General disjunction: No feasible solution found, use SCIP default branching rule" << std::endl;
