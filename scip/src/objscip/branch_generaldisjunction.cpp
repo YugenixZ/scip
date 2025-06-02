@@ -1188,8 +1188,7 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          std::cout << "Infeasible solution: LP not solved to optimality" << std::endl;
       }
 
-      SCIP* test_model = createTestModel(A, b, c);
-      SCIP_CALL_ABORT(SCIPsolve(test_model));
+
       SCIP_Real LP_obj = SCIPgetLPObjval(scip);
       SCIP_Real node_lowerbound = SCIPgetNodeLowerbound(scip, curr_Node);
       SCIP_Real Primalsol = createTestModel(A, b, c);
