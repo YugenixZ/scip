@@ -1267,10 +1267,10 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          cout << "Right feasibility: " << right_feas << "The est is: "<< final_results[0].est_r << std::endl;
          if (status_r == "infeasible" || status_r == "ckmodel infeasible") {
 
-         SCIP_Bool CreateChild = FALSE;
-         SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
-         std::cout << "General disjunction: Only Left constraint added:" << std::endl;
-         *result = SCIP_CONSADDED;
+            SCIP_Bool CreateChild = FALSE;
+            SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, final_results[0].pi0_solution, est_l, "left"));
+            std::cout << "General disjunction: Only Left constraint added:" << std::endl;
+            *result = SCIP_CONSADDED;
          }
          else {
             if (est_r < node_lowerbound) {
@@ -1292,11 +1292,11 @@ SCIP_DECL_BRANCHEXECLP(BranchruleGeneralDisjunction::scip_execlp){
          cout << "Left feasibility: " << left_feas << "The est is: "<< final_results[0].est_l << std::endl;
          cout << "Right feasibility: " << right_feas << "The est is: "<< final_results[0].est_r << std::endl;
          if (status_l == "infeasible" || status_l == "ckmodel infeasible") {
-         SCIP_Bool CreateChild = FALSE;
-         int pi0_sol_plus = final_results[0].pi0_solution + 1;
-         SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, pi0_sol_plus, est_r, "right"));
-         std::cout << "General disjunction: Only Right constraint added:" << std::endl;
-         *result = SCIP_CONSADDED;
+            SCIP_Bool CreateChild = FALSE;
+            int pi0_sol_plus = final_results[0].pi0_solution + 1;
+            SCIP_CALL(createBranchingConstraint(scip, CreateChild, curr_Node, vars_lp, final_results[0].pi_solution, pi0_sol_plus, est_r, "right"));
+            std::cout << "General disjunction: Only Right constraint added:" << std::endl;
+            *result = SCIP_CONSADDED;
          }
          else {
             if (est_l < node_lowerbound) {
